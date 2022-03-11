@@ -1,3 +1,5 @@
+import { Roles } from 'src/users/types';
+
 export type AuthPayload = {
   username: string;
   password: string;
@@ -7,8 +9,9 @@ export type AuthPayload = {
 };
 
 export type AuthResponsePayload = {
-  username: string;
-  sub: number;
+  userName: string;
+  userId: number;
+  role: Roles;
 };
 
 export type EmittedToken = {
