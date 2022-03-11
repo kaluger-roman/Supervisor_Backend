@@ -6,6 +6,8 @@ import { User as UserModel } from './users.model';
 import { Sequelize } from 'sequelize-typescript';
 import { ConfigService } from '@nestjs/config';
 import { BCRYPT_SAULT } from './constants';
+import { AuthPayload } from 'src/auth/types';
+import { Op } from 'sequelize';
 
 @Injectable()
 export class UsersService {
@@ -19,24 +21,39 @@ export class UsersService {
     return this.userModel.findByPk(id);
   }
 
-  async findByName(username: string): Promise<User | null> {
-    return this.userModel.findOne({ where: { username } });
+  async findByNameAndEmail(
+    username: string,
+    email?: string,
+  ): Promise<User | null> {
+    const filterhObj = email
+      ? { [Op.or]: [{ username }, { email }] }
+      : { username };
+
+    return this.userModel.findOne({ where: filterhObj });
   }
 
-  async createOne(username: string, password: string): Promise<User | null> {
-    const isExist = await this.findByName(username);
+  async createOne(authPayload: AuthPayload): Promise<User | null> {
+    const isExist = await this.findByNameAndEmail(
+      authPayload.username,
+      authPayload.email,
+    );
     if (isExist) {
       throw new HttpException(
-        'Такой пользователь уже существует(',
+        {
+          all: 'Такой пользователь уже существует',
+        },
         HttpStatus.UNPROCESSABLE_ENTITY,
       );
     }
 
     let user = null;
+    const password = authPayload.password;
+
+    delete authPayload.password;
     await this.sequelize.transaction(async (t) => {
       user = await this.userModel.create(
         {
-          username,
+          ...authPayload,
           passwordHash: bcrypt.hashSync(
             password,
             this.config.get<string>(BCRYPT_SAULT),

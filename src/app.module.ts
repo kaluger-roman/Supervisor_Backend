@@ -6,6 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { DB_VARIABLES } from './constants';
 import { Dialect } from 'sequelize/types';
+import { InitModule } from './init/init.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { Dialect } from 'sequelize/types';
       }),
     }),
     AuthModule,
+    InitModule,
   ],
   controllers: [AppController],
   providers: [AppService],

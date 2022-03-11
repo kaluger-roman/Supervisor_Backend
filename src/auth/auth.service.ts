@@ -3,8 +3,7 @@ import * as bcrypt from 'bcrypt';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/users/types';
-import { AuthPayload } from './auth.module';
-import { EmittedToken } from './types';
+import { AuthPayload, AuthResponsePayload, EmittedToken } from './types';
 
 @Injectable()
 export class AuthService {
@@ -24,14 +23,17 @@ export class AuthService {
   }
 
   emitToken(user: User): EmittedToken {
-    const payload: AuthPayload = { username: user.username, sub: user.id };
+    const payload: AuthResponsePayload = {
+      username: user.username,
+      sub: user.id,
+    };
     return {
       access_token: this.jwtService.sign(payload),
     };
   }
 
-  async register(username: string, password: string): Promise<EmittedToken> {
-    const user = await this.usersService.createOne(username, password);
+  async register(authPayload: AuthPayload): Promise<EmittedToken> {
+    const user = await this.usersService.createOne(authPayload);
 
     return this.emitToken(user);
   }
@@ -42,12 +44,15 @@ export class AuthService {
   }
 
   async auth(username: string, password: string): Promise<EmittedToken> {
-    const user = await this.usersService.findByName(username);
-    const isValidPassword = bcrypt.compareSync(user.passwordHash, password);
+    const user = await this.usersService.findByNameAndEmail(username);
+    const isValidPassword =
+      user && bcrypt.compareSync(password, user.passwordHash);
 
     if (!user || !isValidPassword) {
       throw new HttpException(
-        'Неверное имя пользователя или пароль.',
+        {
+          all: 'Неверное имя пользователя или пароль',
+        },
         HttpStatus.UNAUTHORIZED,
       );
     }

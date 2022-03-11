@@ -5,7 +5,7 @@ import { Public } from './jwt-auth.guard';
 import { EmittedToken, AuthPayload } from './types';
 
 @Controller(ROUTES.API.AUTH.BASE)
-export class AppController {
+export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Public()
@@ -19,8 +19,6 @@ export class AppController {
   @Public()
   @Post(ROUTES.API.AUTH.REGISTER)
   register(@Body() body: AuthPayload): Promise<EmittedToken> {
-    const { username, password } = body;
-
-    return this.authService.register(username, password);
+    return this.authService.register(body);
   }
 }

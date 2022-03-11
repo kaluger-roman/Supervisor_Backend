@@ -6,11 +6,7 @@ import { UsersModule } from '../users/users.module';
 import { JwtStrategy } from './jwt.strategy';
 import { ConfigService } from '@nestjs/config';
 import { JWT_EXPIRES, JWT_SECRET_NAME } from './constants';
-
-export type AuthPayload = {
-  username: string;
-  sub: number;
-};
+import { AuthController } from './auth.controller';
 
 @Module({
   imports: [
@@ -24,6 +20,7 @@ export type AuthPayload = {
       }),
     }),
   ],
+  controllers: [AuthController],
   providers: [AuthService, JwtStrategy],
   exports: [AuthService],
 })

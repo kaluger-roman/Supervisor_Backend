@@ -1,5 +1,13 @@
-import { Column, Model, Table } from 'sequelize-typescript';
+import {
+  BelongsTo,
+  Column,
+  ForeignKey,
+  IsEmail,
+  Model,
+  Table,
+} from 'sequelize-typescript';
 import { Roles } from './types';
+import { Secret } from './secrets.model';
 
 @Table
 export class User extends Model {
@@ -14,4 +22,18 @@ export class User extends Model {
 
   @Column({ defaultValue: Roles.user })
   role: Roles;
+
+  @Column
+  secretAnswer: string;
+
+  @IsEmail
+  @Column
+  email: string;
+
+  @ForeignKey(() => Secret)
+  @Column
+  secretId: number;
+
+  @BelongsTo(() => Secret)
+  secret: Secret;
 }
