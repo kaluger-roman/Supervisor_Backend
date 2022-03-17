@@ -7,6 +7,7 @@ import { JwtStrategy } from './jwt.strategy';
 import { ConfigService } from '@nestjs/config';
 import { JWT_EXPIRES, JWT_SECRET_NAME } from './constants';
 import { AuthController } from './auth.controller';
+import { WsJwtGuard } from './jwt-socket-auth.guard';
 
 @Module({
   imports: [
@@ -21,7 +22,7 @@ import { AuthController } from './auth.controller';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy],
+  providers: [AuthService, JwtStrategy, WsJwtGuard],
   exports: [AuthService],
 })
 export class AuthModule {}

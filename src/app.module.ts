@@ -7,6 +7,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { DB_VARIABLES } from './constants';
 import { Dialect } from 'sequelize/types';
 import { InitModule } from './init/init.module';
+import { WebRTCModule } from './webrtc/webrtc.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { InitModule } from './init/init.module';
         synchronize: true,
       }),
     }),
+    WebRTCModule,
     AuthModule,
     InitModule,
   ],
