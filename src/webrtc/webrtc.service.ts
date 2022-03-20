@@ -5,7 +5,13 @@ import { CallsService } from 'src/calls/calls.service';
 import { CallStatus } from 'src/calls/types';
 import { EVENT_TYPES } from 'src/events/constants';
 import { EventsGateway } from 'src/events/events.gateway';
-import { AnswerPayload, NewIceCandidate, OfferPayload } from './types';
+import {
+  AnswerPayload,
+  EndedPayload,
+  FailedPayload,
+  NewIceCandidate,
+  OfferPayload,
+} from './types';
 
 @Injectable()
 export class WebRTCService {
@@ -59,10 +65,38 @@ export class WebRTCService {
       });
   }
 
+  async handleEndCall(payload: WithUser<EndedPayload>) {
+    const existingCall = await this.callsService.findCallById(payload.callId);
+
+    if (!existingCall) {
+      return;
+    }
+
+    this.callsService.updateCallStatus({
+      status: CallStatus.ended,
+      id: existingCall.id,
+    });
+  }
+
+  async handleFailedCall(payload: WithUser<FailedPayload>) {
+    const existingCall = await this.callsService.findCallById(payload.callId);
+
+    if (!existingCall) {
+      return;
+    }
+
+    this.callsService.updateCallStatus({
+      status: CallStatus.failed,
+      id: existingCall.id,
+    });
+  }
+
   async handleNewIce(payload: WithUser<NewIceCandidate>) {
-    const existingCall = await this.callsService.findActiveCallByCallee(
-      payload.user.webrtcNumber,
-    );
+    const existingCall = await this.callsService.findCallById(payload.callId);
+
+    if (!existingCall) {
+      return;
+    }
 
     this.eventsGateway.server
       .to(

@@ -74,7 +74,7 @@ export class UsersService {
         where: { name: authPayload.secret },
       });
 
-      user.setSecret(secret);
+      await user.setSecret(secret);
     });
 
     return user;

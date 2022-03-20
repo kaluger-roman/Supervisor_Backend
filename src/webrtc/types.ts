@@ -12,4 +12,7 @@ export type AnswerPayload = {
   answer: RTCSessionDescriptionInit;
 };
 
-export type NewIceCandidate = { iceCandidate: RTCIceCandidate };
+export type NewIceCandidate = { iceCandidate: RTCIceCandidate; callId: number };
+
+export type EndedPayload = { callId: number };
+export type FailedPayload = EndedPayload;

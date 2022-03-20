@@ -8,7 +8,13 @@ import {
 import { Server } from 'socket.io';
 import { WsJwtGuard } from 'src/auth/jwt-socket-auth.guard';
 import { WithUser } from 'src/auth/types';
-import { AnswerPayload, NewIceCandidate, OfferPayload } from 'src/webrtc/types';
+import {
+  AnswerPayload,
+  EndedPayload,
+  FailedPayload,
+  NewIceCandidate,
+  OfferPayload,
+} from 'src/webrtc/types';
 import { WebRTCService } from 'src/webrtc/webrtc.service';
 import { EVENT_TYPES } from './constants';
 
@@ -42,6 +48,22 @@ export class EventsGateway {
     payload: WithUser<AnswerPayload>,
   ): void {
     this.webrtcService.handleAnswer(payload);
+  }
+
+  @SubscribeMessage(EVENT_TYPES.SIGNALING.ENDED)
+  endCall(
+    @MessageBody()
+    payload: WithUser<EndedPayload>,
+  ): void {
+    this.webrtcService.handleEndCall(payload);
+  }
+
+  @SubscribeMessage(EVENT_TYPES.SIGNALING.FAILED)
+  failedCall(
+    @MessageBody()
+    payload: WithUser<FailedPayload>,
+  ): void {
+    this.webrtcService.handleFailedCall(payload);
   }
 
   @SubscribeMessage(EVENT_TYPES.SIGNALING.NEW_ICE)

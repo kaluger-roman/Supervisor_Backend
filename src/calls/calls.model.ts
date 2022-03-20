@@ -16,6 +16,9 @@ export class Call extends Model {
   @Column({ primaryKey: true, autoIncrement: true })
   id: number;
 
+  @Column
+  status: CallStatus;
+
   @Column({ defaultValue: [], type: DataType.ARRAY(DataType.STRING) })
   statusSequence: CallStatus[];
 
@@ -44,9 +47,14 @@ export class Call extends Model {
 
   @BeforeUpdate
   @BeforeCreate
-  static addStatusTimestamp(instance: Call) {
-    instance.statusTimestampsSequence = [
-      ...instance.previous().statusTimestampsSequence,
+  static addStatus(instance) {
+    instance.dataValues.statusSequence = [
+      ...(instance._previousDataValues.statusSequence || []),
+      instance.status,
+    ];
+
+    instance.dataValues.statusTimestampsSequence = [
+      ...(instance._previousDataValues.statusTimestampsSequence || []),
       Date.now(),
     ];
   }

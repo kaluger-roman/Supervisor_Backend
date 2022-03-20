@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  BeforeApplicationShutdown,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Sequelize } from 'sequelize-typescript';
 import { Call as CallModel } from './calls.model';
@@ -12,13 +17,28 @@ const ACTIVE_FINDER = {
 };
 
 @Injectable()
-export class CallsService {
+export class CallsService implements BeforeApplicationShutdown {
   constructor(
     @InjectModel(CallModel)
     private callModel: typeof CallModel,
     private usersService: UsersService,
     private sequelize: Sequelize,
   ) {}
+
+  async beforeApplicationShutdown() {
+    await this.callModel.update(
+      {
+        status: CallStatus.failed,
+      },
+      {
+        where: {
+          status: ACTIVE_FINDER,
+        },
+        individualHooks: true,
+      },
+    );
+  }
+
   async findCallById(id: number): Promise<CallRecord | null> {
     return this.callModel.findByPk(id);
   }
@@ -31,7 +51,7 @@ export class CallsService {
         [Op.and]: [
           { celleeWebrtcNumber },
           {
-            statusSequence: ACTIVE_FINDER,
+            status: ACTIVE_FINDER,
           },
         ],
       },
@@ -39,16 +59,16 @@ export class CallsService {
   }
 
   async findActiveCallBySides(
-    cellerWebrtcNumber: string,
-    celleeWebrtcNumber: string,
+    callerWebrtcNumber: string,
+    calleeWebrtcNumber: string,
   ): Promise<CallRecord | null> {
     return this.callModel.findOne({
       where: {
         [Op.and]: [
-          { cellerWebrtcNumber },
-          { celleeWebrtcNumber },
+          { callerWebrtcNumber },
+          { calleeWebrtcNumber },
           {
-            statusSequence: ACTIVE_FINDER,
+            status: ACTIVE_FINDER,
           },
         ],
       },
@@ -56,7 +76,7 @@ export class CallsService {
   }
 
   async createCall(callPayload: CallConnection): Promise<CallRecord | null> {
-    const activeCall = this.findActiveCallBySides(
+    const activeCall = await this.findActiveCallBySides(
       callPayload.callerWebrtcNumber,
       callPayload.calleeWebrtcNumber,
     );
@@ -72,10 +92,11 @@ export class CallsService {
 
     let callRecord = null;
 
-    const caller = this.usersService.findOneByWebrtcNumber(
+    const caller = await this.usersService.findOneByWebrtcNumber(
       callPayload.callerWebrtcNumber,
     );
-    const callee = this.usersService.findOneByWebrtcNumber(
+
+    const callee = await this.usersService.findOneByWebrtcNumber(
       callPayload.calleeWebrtcNumber,
     );
 
@@ -101,13 +122,13 @@ export class CallsService {
       callRecord = await this.callModel.create(
         {
           ...callPayload,
-          statusSequence: [CallStatus.answerWaiting],
+          status: CallStatus.answerWaiting,
         },
         { transaction: t, individualHooks: true },
       );
 
-      callRecord.addCaller(caller);
-      callRecord.addCallee(callee);
+      await callRecord.setCaller(caller);
+      await callRecord.setCallee(callee);
     });
 
     return callRecord;
@@ -116,23 +137,12 @@ export class CallsService {
   async updateCallStatus(
     payload: ChangeCallStatusPayload,
   ): Promise<CallRecord | null> {
-    const callRecord = await this.findCallById(payload.id);
-
-    if (!callRecord) {
-      throw new HttpException(
-        {
-          all: 'Неверный id',
-        },
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
-    }
-
     let updatedCallRecord = null;
 
     await this.sequelize.transaction(async (t) => {
       updatedCallRecord = await this.callModel.update(
         {
-          statusSequence: [...callRecord.statusSequence, payload.status],
+          status: payload.status,
         },
         {
           where: {
