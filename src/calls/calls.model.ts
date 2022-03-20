@@ -35,14 +35,14 @@ export class Call extends Model {
   @Column
   callerId: number;
 
-  @BelongsTo(() => User)
+  @BelongsTo(() => User, 'callerId')
   caller: User;
 
   @ForeignKey(() => User)
   @Column
   calleeId: number;
 
-  @BelongsTo(() => User)
+  @BelongsTo(() => User, 'calleeId')
   callee: User;
 
   @BeforeUpdate

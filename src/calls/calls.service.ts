@@ -127,8 +127,8 @@ export class CallsService implements BeforeApplicationShutdown {
         { transaction: t, individualHooks: true },
       );
 
-      await callRecord.setCaller(caller);
-      await callRecord.setCallee(callee);
+      callRecord.setCaller(caller);
+      callRecord.setCallee(callee);
     });
 
     return callRecord;
