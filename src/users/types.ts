@@ -1,5 +1,3 @@
-import { Secret } from './secrets.model';
-
 export const enum Roles {
   admin = 'admin',
   user = 'user',
@@ -14,4 +12,10 @@ export class User {
   secret: Secret;
   secretAnswer: string;
   email: string;
+  webrtcNumber: string;
 }
+
+export type Secret = {
+  name: string;
+  users?: User[];
+};

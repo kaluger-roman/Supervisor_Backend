@@ -16,7 +16,7 @@ export class InitService {
     this.init();
   }
   async init() {
-    const usersCount = await this.userModel.count();
+    //const usersCount = await this.userModel.count();
     const secretsCount = await this.secretModel.count();
 
     if (!secretsCount) {

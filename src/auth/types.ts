@@ -1,4 +1,4 @@
-import { Roles } from 'src/users/types';
+import { Roles, User } from 'src/users/types';
 
 export type AuthPayload = {
   username: string;
@@ -16,4 +16,8 @@ export type AuthResponsePayload = {
 
 export type EmittedToken = {
   access_token: string;
+};
+
+export type WithUser<T> = T & {
+  user: Omit<User, 'passwordHash'>;
 };

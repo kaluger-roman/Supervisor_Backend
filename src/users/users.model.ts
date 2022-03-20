@@ -2,12 +2,14 @@ import {
   BelongsTo,
   Column,
   ForeignKey,
+  HasMany,
   IsEmail,
   Model,
   Table,
 } from 'sequelize-typescript';
 import { Roles } from './types';
 import { Secret } from './secrets.model';
+import { Call } from 'src/calls/calls.model';
 
 @Table
 export class User extends Model {
@@ -19,6 +21,9 @@ export class User extends Model {
 
   @Column
   passwordHash: string;
+
+  @Column({ unique: true })
+  webrtcNumber: string;
 
   @Column({ defaultValue: Roles.user })
   role: Roles;
@@ -36,4 +41,7 @@ export class User extends Model {
 
   @BelongsTo(() => Secret)
   secret: Secret;
+
+  @HasMany(() => Call)
+  calls: Call[];
 }

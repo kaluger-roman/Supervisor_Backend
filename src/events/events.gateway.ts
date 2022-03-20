@@ -4,13 +4,13 @@ import {
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
-  WsResponse,
 } from '@nestjs/websockets';
 import { Server } from 'socket.io';
 import { WsJwtGuard } from 'src/auth/jwt-socket-auth.guard';
+import { WithUser } from 'src/auth/types';
+import { AnswerPayload, NewIceCandidate, OfferPayload } from 'src/webrtc/types';
 import { WebRTCService } from 'src/webrtc/webrtc.service';
 import { EVENT_TYPES } from './constants';
-import { SignalStatus, SignalStatusResponse } from './types';
 
 @UseGuards(WsJwtGuard)
 @WebSocketGateway({
@@ -29,16 +29,23 @@ export class EventsGateway {
   ) {}
 
   @SubscribeMessage(EVENT_TYPES.SIGNALING.OFFER)
-  handleWebrtcOffer(
-    @MessageBody() offer: RTCSessionDescriptionInit,
-  ): WsResponse<SignalStatusResponse> {
-    console.log(offer);
+  initCall(
+    @MessageBody()
+    payload: WithUser<OfferPayload>,
+  ): void {
+    this.webrtcService.handleOffer(payload);
+  }
 
-    //this.webrtcService.addPeerConnection(offer);
+  @SubscribeMessage(EVENT_TYPES.SIGNALING.ANSWER)
+  answerCall(
+    @MessageBody()
+    payload: WithUser<AnswerPayload>,
+  ): void {
+    this.webrtcService.handleAnswer(payload);
+  }
 
-    return {
-      event: EVENT_TYPES.SIGNALING.OFFER_RECEIVED,
-      data: { status: SignalStatus.ok },
-    };
+  @SubscribeMessage(EVENT_TYPES.SIGNALING.NEW_ICE)
+  handleWebrtcNewIce(@MessageBody() payload: WithUser<NewIceCandidate>): void {
+    this.webrtcService.handleNewIce(payload);
   }
 }

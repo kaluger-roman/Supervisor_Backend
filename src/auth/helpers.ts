@@ -1,1 +1,1 @@
-export const roomPrefix = (userId) => `room+${userId}`;
+export const roomPrefix = (userId: number): string => `room+${userId}`;

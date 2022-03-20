@@ -1,80 +1,79 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { roomPrefix } from 'src/auth/helpers';
+import { WithUser } from 'src/auth/types';
+import { CallsService } from 'src/calls/calls.service';
+import { CallStatus } from 'src/calls/types';
 import { EVENT_TYPES } from 'src/events/constants';
 import { EventsGateway } from 'src/events/events.gateway';
-import { AgentConfiguration, PeerConnectionsPullItem } from './types';
+import { AnswerPayload, NewIceCandidate, OfferPayload } from './types';
 
 @Injectable()
 export class WebRTCService {
-  configuration: AgentConfiguration = {
-    iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
-  };
-  peerConnectionsPull: PeerConnectionsPullItem[];
-
   constructor(
     @Inject(forwardRef(() => EventsGateway))
     private eventsGateway: EventsGateway,
-  ) {
-    //this.peerConnection = new RTCPeerConnection(this.configuration);
-    //   EventSocket.socket.on(
-    //     EVENT_TYPES.SIGNALING.ANSWER,
-    //     async (data: { answer: RTCSessionDescriptionInit }) => {
-    //       if (data.answer) {
-    //         const remoteDesc = new RTCSessionDescription(data.answer);
-    //         await this.peerConnection.setRemoteDescription(remoteDesc);
-    //       }
-    //     },
-    //   );
-    //   EventSocket.socket.on(EVENT_TYPES.SIGNALING.NEW_ICE, async (message) => {
-    //     if (message.iceCandidate) {
-    //       try {
-    //         await this.peerConnection.addIceCandidate(message.iceCandidate);
-    //       } catch (e) {
-    //         console.error('Error adding received ice candidate', e);
-    //       }
-    //     }
-    //   });
-    //   this.peerConnection.addEventListener('icecandidate', (event) => {
-    //     if (event.candidate) {
-    //       EventSocket.socket.emit(EVENT_TYPES.SIGNALING.NEW_ICE, {
-    //         candidate: event.candidate,
-    //       });
-    //     }
-    //   });
-    // }
-    // async createOfferConnection() {
-    //   const offer = await this.peerConnection.createOffer();
-    //   await this.peerConnection.setLocalDescription(offer);
-    //   EventSocket.socket.emit(EVENT_TYPES.SIGNALING.OFFER, { offer: offer });
-    // }
-    // async attachAudioToConnection() {
-    //   if (this.localAudioStream) {
-    //     this.localAudioStream.getTracks().forEach((track) => {
-    //       this.attachedTrack = this.peerConnection.addTrack(
-    //         track,
-    //         this.localAudioStream!,
-    //       );
-    //     });
-    //   }
-    // }
-    // async removeAudioFromConnection() {
-    //   if (this.attachedTrack) {
-    //     this.peerConnection.removeTrack(this.attachedTrack);
-    //   }
+    private callsService: CallsService,
+  ) {}
+
+  async handleOffer(payload: WithUser<OfferPayload>) {
+    const call = await this.callsService.createCall({
+      calleeWebrtcNumber: payload.callNumber,
+      callerWebrtcNumber: payload.user.webrtcNumber,
+    });
+
+    this.eventsGateway.server
+      .to(roomPrefix(call.calleeId))
+      .emit(EVENT_TYPES.SIGNALING.OFFER, {
+        offer: payload.offer,
+      });
+
+    this.eventsGateway.server
+      .to(roomPrefix(call.calleeId))
+      .to(roomPrefix(call.callerId))
+      .emit(EVENT_TYPES.CALL.CHANGE, {
+        call,
+      });
   }
 
-  async addPeerConnection(rtcOffer: RTCSessionDescriptionInit) {
-    const peerConnection = new RTCPeerConnection(this.configuration);
+  async handleAnswer(payload: WithUser<AnswerPayload>) {
+    const existingCall = await this.callsService.findActiveCallByCallee(
+      payload.user.webrtcNumber,
+    );
 
-    //this.peerConnectionsPull.push();
-
-    peerConnection.setRemoteDescription(new RTCSessionDescription(rtcOffer));
-
-    const answer = await peerConnection.createAnswer();
-
-    await peerConnection.setLocalDescription(answer);
-
-    this.eventsGateway.server.emit(EVENT_TYPES.SIGNALING.ANSWER, {
-      answer: answer,
+    const updatedCall = await this.callsService.updateCallStatus({
+      id: existingCall.id,
+      status: CallStatus.active,
     });
+
+    this.eventsGateway.server
+      .to(roomPrefix(updatedCall.callerId))
+      .emit(EVENT_TYPES.SIGNALING.ANSWER, {
+        answer: payload.answer,
+      });
+
+    this.eventsGateway.server
+      .to(roomPrefix(updatedCall.callerId))
+      .to(roomPrefix(updatedCall.calleeId))
+      .emit(EVENT_TYPES.CALL.CHANGE, {
+        call: updatedCall,
+      });
+  }
+
+  async handleNewIce(payload: WithUser<NewIceCandidate>) {
+    const existingCall = await this.callsService.findActiveCallByCallee(
+      payload.user.webrtcNumber,
+    );
+
+    this.eventsGateway.server
+      .to(
+        roomPrefix(
+          existingCall.calleeId === payload.user.id
+            ? existingCall.callerId
+            : existingCall.calleeId,
+        ),
+      )
+      .emit(EVENT_TYPES.SIGNALING.NEW_ICE, {
+        answer: payload.iceCandidate,
+      });
   }
 }

@@ -21,6 +21,10 @@ export class UsersService {
     return this.userModel.findByPk(id);
   }
 
+  async findOneByWebrtcNumber(webrtcNumber: string): Promise<User | null> {
+    return this.userModel.findOne({ where: { webrtcNumber: webrtcNumber } });
+  }
+
   async findByNameAndEmail(
     username: string,
     email?: string,
@@ -37,6 +41,7 @@ export class UsersService {
       authPayload.username,
       authPayload.email,
     );
+
     if (isExist) {
       throw new HttpException(
         {
