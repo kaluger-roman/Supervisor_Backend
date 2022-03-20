@@ -8,12 +8,15 @@ import { ConfigService } from '@nestjs/config';
 import { BCRYPT_SAULT } from './constants';
 import { AuthPayload } from 'src/auth/types';
 import { Op } from 'sequelize';
+import { Secret as SecretModel } from './secrets.model';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(UserModel)
     private userModel: typeof UserModel,
+    @InjectModel(SecretModel)
+    private secretModel: typeof SecretModel,
     private sequelize: Sequelize,
     private config: ConfigService,
   ) {}
@@ -66,6 +69,12 @@ export class UsersService {
         },
         { transaction: t },
       );
+
+      const secret = await this.secretModel.findOne({
+        where: { name: authPayload.secret },
+      });
+
+      user.setSecret(secret);
     });
 
     return user;
