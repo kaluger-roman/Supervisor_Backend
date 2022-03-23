@@ -9,20 +9,18 @@ import { JWT_EXPIRES, JWT_SECRET_NAME } from './constants';
 import { AuthController } from './auth.controller';
 import { WsJwtGuard } from './jwt-socket-auth.guard';
 
+const JwtModuleRegistered = JwtModule.registerAsync({
+  inject: [ConfigService],
+  useFactory: (config: ConfigService) => ({
+    secret: config.get<string>(JWT_SECRET_NAME),
+    signOptions: { expiresIn: JWT_EXPIRES },
+  }),
+});
+
 @Module({
-  imports: [
-    UsersModule,
-    PassportModule,
-    JwtModule.registerAsync({
-      inject: [ConfigService],
-      useFactory: (config: ConfigService) => ({
-        secret: config.get<string>(JWT_SECRET_NAME),
-        signOptions: { expiresIn: JWT_EXPIRES },
-      }),
-    }),
-  ],
+  imports: [UsersModule, PassportModule, JwtModuleRegistered],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy, WsJwtGuard],
-  exports: [AuthService],
+  exports: [AuthService, JwtModuleRegistered],
 })
 export class AuthModule {}

@@ -6,6 +6,10 @@ export const ROUTES = {
       BASE: BASE_API_ROUTE + '/auth',
       LOGIN: 'login',
       REGISTER: 'register',
+      LOGOUT: '/logout',
+      RECOVER_PASSWORD: '/recover_password',
+      CHANGE_PASSWORD: '/change_password',
+      VERIFY: '/verify_token',
     },
   },
 };

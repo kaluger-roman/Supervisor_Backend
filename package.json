@@ -33,7 +33,6 @@
     "@nestjs/websockets": "^8.4.0",
     "@sequelize/core": "^7.0.0-alpha.10",
     "bcrypt": "^5.0.1",
-    "jwt-decode": "^3.1.2",
     "passport": "^0.5.2",
     "pg": "^8.7.3",
     "pg-hstore": "^2.3.4",

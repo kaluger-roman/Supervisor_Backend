@@ -1,4 +1,4 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, Get } from '@nestjs/common';
 import { ROUTES } from 'src/routes.constants';
 import { AuthService } from './auth.service';
 import { Public } from './jwt-auth.guard';
@@ -20,5 +20,10 @@ export class AuthController {
   @Post(ROUTES.API.AUTH.REGISTER)
   register(@Body() body: AuthPayload): Promise<EmittedToken> {
     return this.authService.register(body);
+  }
+
+  @Get(ROUTES.API.AUTH.VERIFY)
+  verifyToken(): void {
+    return;
   }
 }
