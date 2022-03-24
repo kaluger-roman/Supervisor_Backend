@@ -13,9 +13,16 @@ export class User {
   secretAnswer: string;
   email: string;
   webrtcNumber: string;
+  status: UserStatuses;
 }
 
 export type Secret = {
   name: string;
   users?: User[];
 };
+
+export enum UserStatuses {
+  online = 'online',
+  offline = 'offline',
+  away = 'away',
+}

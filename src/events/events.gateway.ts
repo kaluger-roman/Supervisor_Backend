@@ -8,6 +8,10 @@ import {
 import { Server } from 'socket.io';
 import { WsJwtGuard } from 'src/auth/jwt-socket-auth.guard';
 import { WithUser } from 'src/auth/types';
+import { Call } from 'src/calls/calls.model';
+import { CheckPolicies } from 'src/casl/casl.decorator';
+import { PoliciesGuard } from 'src/casl/casl.guard';
+import { Action, AppAbility } from 'src/casl/types';
 import {
   AnswerPayload,
   EndedPayload,
@@ -19,6 +23,7 @@ import { WebRTCService } from 'src/webrtc/webrtc.service';
 import { EVENT_TYPES } from './constants';
 
 @UseGuards(WsJwtGuard)
+@UseGuards(PoliciesGuard)
 @WebSocketGateway({
   cors: {
     origin: '*',

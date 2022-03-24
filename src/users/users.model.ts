@@ -7,7 +7,7 @@ import {
   Model,
   Table,
 } from 'sequelize-typescript';
-import { Roles } from './types';
+import { Roles, UserStatuses } from './types';
 import { Secret } from './secrets.model';
 import { Call } from 'src/calls/calls.model';
 
@@ -18,6 +18,9 @@ export class User extends Model {
 
   @Column
   username: string;
+
+  @Column({ defaultValue: UserStatuses.offline })
+  status: UserStatuses;
 
   @Column
   passwordHash: string;

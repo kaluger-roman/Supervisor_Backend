@@ -8,6 +8,7 @@ import { DB_VARIABLES } from './constants';
 import { Dialect } from 'sequelize/types';
 import { InitModule } from './init/init.module';
 import { WebRTCModule } from './webrtc/webrtc.module';
+import { AgentModule } from './agent/agent.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { WebRTCModule } from './webrtc/webrtc.module';
     }),
     WebRTCModule,
     AuthModule,
+    AgentModule,
     InitModule,
   ],
   controllers: [AppController],

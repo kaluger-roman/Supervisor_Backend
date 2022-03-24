@@ -6,9 +6,10 @@ import { User as UserModel } from './users.model';
 import { Sequelize } from 'sequelize-typescript';
 import { ConfigService } from '@nestjs/config';
 import { BCRYPT_SAULT } from './constants';
-import { AuthPayload } from 'src/auth/types';
+import { AuthPayload, WithUser } from 'src/auth/types';
 import { Op } from 'sequelize';
 import { Secret as SecretModel } from './secrets.model';
+import { ChangeStatusPayload } from 'src/agent/types';
 
 @Injectable()
 export class UsersService {
@@ -78,5 +79,30 @@ export class UsersService {
     });
 
     return user;
+  }
+
+  async updateStatus(
+    changeStatusPayload: WithUser<ChangeStatusPayload>,
+  ): Promise<User | null> {
+    let updatedUser: User | null = null;
+
+    await this.sequelize.transaction(async (t) => {
+      const [_, user] = await this.userModel.update(
+        {
+          status: changeStatusPayload.status,
+        },
+        {
+          where: {
+            id: changeStatusPayload.user.id,
+          },
+          returning: true,
+          transaction: t,
+        },
+      );
+
+      if (user) updatedUser = user[0];
+    });
+
+    return updatedUser;
   }
 }

@@ -21,3 +21,8 @@ export type EmittedToken = {
 export type WithUser<T> = T & {
   user: Omit<User, 'passwordHash'>;
 };
+
+export type ReqWithUser<T> = {
+  body: T;
+  user: Omit<User, 'passwordHash'>;
+};

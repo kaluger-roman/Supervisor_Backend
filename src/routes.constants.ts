@@ -11,5 +11,9 @@ export const ROUTES = {
       CHANGE_PASSWORD: '/change_password',
       VERIFY: '/verify_token',
     },
+    AGENT: {
+      BASE: BASE_API_ROUTE + '/agent',
+      STATUS: '/status',
+    },
   },
 };
