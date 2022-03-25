@@ -13,6 +13,7 @@ import { UsersService } from 'src/users/users.service';
 import { Op } from 'sequelize';
 import { UserStatuses } from 'src/users/types';
 import { WsException } from '@nestjs/websockets';
+import { User } from 'src/users/users.model';
 
 const ACTIVE_FINDER = {
   [Op.in]: [CallStatus.answerWaiting, CallStatus.active],
@@ -42,7 +43,18 @@ export class CallsService implements BeforeApplicationShutdown {
   }
 
   async findCallById(id: number): Promise<CallRecord | null> {
-    return this.callModel.findByPk(id);
+    return this.callModel.findByPk(id, {
+      include: [
+        {
+          model: User,
+          as: 'callee',
+        },
+        {
+          model: User,
+          as: 'caller',
+        },
+      ],
+    });
   }
 
   async findActiveCallByCallee(
@@ -122,16 +134,14 @@ export class CallsService implements BeforeApplicationShutdown {
       callRecord.setCallee(callee);
     });
 
-    return callRecord;
+    return await this.findCallById(callRecord.id);
   }
 
   async updateCallStatus(
     payload: ChangeCallStatusPayload,
   ): Promise<CallRecord | null> {
-    let updatedCallRecord = null;
-
     await this.sequelize.transaction(async (t) => {
-      updatedCallRecord = await this.callModel.update(
+      await this.callModel.update(
         {
           status: payload.status,
         },
@@ -145,6 +155,6 @@ export class CallsService implements BeforeApplicationShutdown {
       );
     });
 
-    return updatedCallRecord;
+    return await this.findCallById(payload.id);
   }
 }

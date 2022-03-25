@@ -23,13 +23,15 @@ export enum CallStatus {
   active = 'active',
   ended = 'ended',
   failed = 'failed',
+  cancelled = 'cancelled',
 }
 
 export const StatusToTimestampDict = {
   [CallStatus.active]: 'startTimestamp',
   [CallStatus.ended]: 'endTimestamp',
-  [CallStatus.rejected]: 'endTimestamp',
+  [CallStatus.rejected]: 'rejectedTimestamp',
   [CallStatus.failed]: 'failedTimestamp',
+  [CallStatus.cancelled]: 'cancelledTimestamp',
 };
 
 export enum CallErrors {

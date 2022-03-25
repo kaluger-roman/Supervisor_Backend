@@ -11,12 +11,13 @@ import { WithUser } from 'src/auth/types';
 import {
   AnswerPayload,
   EndedPayload,
-  FailedPayload,
   NewIceCandidate,
   OfferPayload,
 } from 'src/webrtc/types';
 import { WebRTCService } from 'src/webrtc/webrtc.service';
 import { EVENT_TYPES } from './constants';
+import { CallStatus } from 'src/calls/types';
+import { consoleBlue } from 'helpers/coloredConsole';
 
 @UseGuards(WsJwtGuard)
 @WebSocketGateway({
@@ -55,15 +56,23 @@ export class EventsGateway {
     @MessageBody()
     payload: WithUser<EndedPayload>,
   ): Promise<void> {
-    await this.webrtcService.handleEndCall(payload);
+    await this.webrtcService.handleEndCall(payload, CallStatus.ended);
+  }
+
+  @SubscribeMessage(EVENT_TYPES.SIGNALING.CANCEL)
+  async cancelCall(
+    @MessageBody()
+    payload: WithUser<EndedPayload>,
+  ): Promise<void> {
+    await this.webrtcService.handleEndCall(payload, CallStatus.cancelled);
   }
 
   @SubscribeMessage(EVENT_TYPES.SIGNALING.FAILED)
   async failedCall(
     @MessageBody()
-    payload: WithUser<FailedPayload>,
+    payload: WithUser<EndedPayload>,
   ): Promise<void> {
-    await this.webrtcService.handleFailedCall(payload);
+    await this.webrtcService.handleEndCall(payload, CallStatus.failed);
   }
 
   @SubscribeMessage(EVENT_TYPES.SIGNALING.NEW_ICE)
@@ -71,5 +80,10 @@ export class EventsGateway {
     @MessageBody() payload: WithUser<NewIceCandidate>,
   ): Promise<void> {
     await this.webrtcService.handleNewIce(payload);
+  }
+
+  @SubscribeMessage(EVENT_TYPES.INIT)
+  iniSocket(@MessageBody() payload: WithUser<object>): void {
+    consoleBlue(`User ${payload.user.username} registered in socket`);
   }
 }

@@ -1,4 +1,5 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { pick } from 'lodash';
 import { roomPrefix } from 'src/auth/helpers';
 import { WithUser } from 'src/auth/types';
 import { CallsService } from 'src/calls/calls.service';
@@ -8,7 +9,6 @@ import { EventsGateway } from 'src/events/events.gateway';
 import {
   AnswerPayload,
   EndedPayload,
-  FailedPayload,
   NewIceCandidate,
   OfferPayload,
 } from './types';
@@ -37,7 +37,15 @@ export class WebRTCService {
       .to(roomPrefix(call.calleeId))
       .to(roomPrefix(call.callerId))
       .emit(EVENT_TYPES.CALL.CHANGE, {
-        call,
+        call: {
+          callee: pick(call.callee, ['username', 'webrtcNumber']),
+          ...pick(call, [
+            'status',
+            'statusSequence',
+            'statusTimestampsSequence',
+            'id',
+          ]),
+        },
       });
   }
 
@@ -65,7 +73,7 @@ export class WebRTCService {
       });
   }
 
-  async handleEndCall(payload: WithUser<EndedPayload>) {
+  async handleEndCall(payload: WithUser<EndedPayload>, status: CallStatus) {
     const existingCall = await this.callsService.findCallById(payload.callId);
 
     if (!existingCall) {
@@ -73,20 +81,7 @@ export class WebRTCService {
     }
 
     this.callsService.updateCallStatus({
-      status: CallStatus.ended,
-      id: existingCall.id,
-    });
-  }
-
-  async handleFailedCall(payload: WithUser<FailedPayload>) {
-    const existingCall = await this.callsService.findCallById(payload.callId);
-
-    if (!existingCall) {
-      return;
-    }
-
-    this.callsService.updateCallStatus({
-      status: CallStatus.failed,
+      status,
       id: existingCall.id,
     });
   }
