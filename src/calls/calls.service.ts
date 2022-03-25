@@ -1,16 +1,18 @@
-import {
-  BeforeApplicationShutdown,
-  HttpException,
-  HttpStatus,
-  Injectable,
-} from '@nestjs/common';
+import { BeforeApplicationShutdown, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Sequelize } from 'sequelize-typescript';
 import { Call as CallModel } from './calls.model';
-import { CallRecord, CallStatus, ChangeCallStatusPayload } from './types';
+import {
+  CallErrors,
+  CallRecord,
+  CallStatus,
+  ChangeCallStatusPayload,
+} from './types';
 import { CallConnection } from 'src/webrtc/types';
 import { UsersService } from 'src/users/users.service';
 import { Op } from 'sequelize';
+import { UserStatuses } from 'src/users/types';
+import { WsException } from '@nestjs/websockets';
 
 const ACTIVE_FINDER = {
   [Op.in]: [CallStatus.answerWaiting, CallStatus.active],
@@ -76,20 +78,6 @@ export class CallsService implements BeforeApplicationShutdown {
   }
 
   async createCall(callPayload: CallConnection): Promise<CallRecord | null> {
-    const activeCall = await this.findActiveCallBySides(
-      callPayload.callerWebrtcNumber,
-      callPayload.calleeWebrtcNumber,
-    );
-
-    if (activeCall) {
-      throw new HttpException(
-        {
-          all: 'Busy',
-        },
-        HttpStatus.ACCEPTED,
-      );
-    }
-
     let callRecord = null;
 
     const caller = await this.usersService.findOneByWebrtcNumber(
@@ -101,21 +89,24 @@ export class CallsService implements BeforeApplicationShutdown {
     );
 
     if (!caller) {
-      throw new HttpException(
-        {
-          all: 'Неверный callerWebrtcNumber',
-        },
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
+      throw new WsException(CallErrors.WrongCallerWebrtcNumber);
     }
 
     if (!callee) {
-      throw new HttpException(
-        {
-          all: 'Неверный calleeWebrtcNumber',
-        },
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
+      throw new WsException(CallErrors.WrongCalleeWebrtcNumber);
+    }
+
+    if (callee.status === UserStatuses.offline) {
+      throw new WsException(CallErrors.AgentOffline);
+    }
+
+    const activeCall = await this.findActiveCallBySides(
+      callPayload.callerWebrtcNumber,
+      callPayload.calleeWebrtcNumber,
+    );
+
+    if (activeCall) {
+      throw new WsException(CallErrors.Busy);
     }
 
     await this.sequelize.transaction(async (t) => {

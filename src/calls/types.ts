@@ -31,3 +31,10 @@ export const StatusToTimestampDict = {
   [CallStatus.rejected]: 'endTimestamp',
   [CallStatus.failed]: 'failedTimestamp',
 };
+
+export enum CallErrors {
+  WrongCallerWebrtcNumber = 'WrongCallerWebrtcNumber',
+  WrongCalleeWebrtcNumber = 'WrongCalleeWebrtcNumber',
+  AgentOffline = 'AgentOffline',
+  Busy = 'Busy',
+}

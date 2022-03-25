@@ -8,10 +8,6 @@ import {
 import { Server } from 'socket.io';
 import { WsJwtGuard } from 'src/auth/jwt-socket-auth.guard';
 import { WithUser } from 'src/auth/types';
-import { Call } from 'src/calls/calls.model';
-import { CheckPolicies } from 'src/casl/casl.decorator';
-import { PoliciesGuard } from 'src/casl/casl.guard';
-import { Action, AppAbility } from 'src/casl/types';
 import {
   AnswerPayload,
   EndedPayload,
@@ -23,7 +19,6 @@ import { WebRTCService } from 'src/webrtc/webrtc.service';
 import { EVENT_TYPES } from './constants';
 
 @UseGuards(WsJwtGuard)
-@UseGuards(PoliciesGuard)
 @WebSocketGateway({
   cors: {
     origin: '*',
@@ -40,39 +35,41 @@ export class EventsGateway {
   ) {}
 
   @SubscribeMessage(EVENT_TYPES.SIGNALING.OFFER)
-  initCall(
+  async initCall(
     @MessageBody()
     payload: WithUser<OfferPayload>,
-  ): void {
-    this.webrtcService.handleOffer(payload);
+  ): Promise<void> {
+    await this.webrtcService.handleOffer(payload);
   }
 
   @SubscribeMessage(EVENT_TYPES.SIGNALING.ANSWER)
-  answerCall(
+  async answerCall(
     @MessageBody()
     payload: WithUser<AnswerPayload>,
-  ): void {
-    this.webrtcService.handleAnswer(payload);
+  ): Promise<void> {
+    await this.webrtcService.handleAnswer(payload);
   }
 
   @SubscribeMessage(EVENT_TYPES.SIGNALING.ENDED)
-  endCall(
+  async endCall(
     @MessageBody()
     payload: WithUser<EndedPayload>,
-  ): void {
-    this.webrtcService.handleEndCall(payload);
+  ): Promise<void> {
+    await this.webrtcService.handleEndCall(payload);
   }
 
   @SubscribeMessage(EVENT_TYPES.SIGNALING.FAILED)
-  failedCall(
+  async failedCall(
     @MessageBody()
     payload: WithUser<FailedPayload>,
-  ): void {
-    this.webrtcService.handleFailedCall(payload);
+  ): Promise<void> {
+    await this.webrtcService.handleFailedCall(payload);
   }
 
   @SubscribeMessage(EVENT_TYPES.SIGNALING.NEW_ICE)
-  handleWebrtcNewIce(@MessageBody() payload: WithUser<NewIceCandidate>): void {
-    this.webrtcService.handleNewIce(payload);
+  async handleWebrtcNewIce(
+    @MessageBody() payload: WithUser<NewIceCandidate>,
+  ): Promise<void> {
+    await this.webrtcService.handleNewIce(payload);
   }
 }
