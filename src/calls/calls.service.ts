@@ -13,7 +13,7 @@ import { UsersService } from 'src/users/users.service';
 import { Op } from 'sequelize';
 import { UserStatuses } from 'src/users/types';
 import { WsException } from '@nestjs/websockets';
-import { User } from 'src/users/users.model';
+import { User as UserModel } from 'src/users/users.model';
 
 const ACTIVE_FINDER = {
   [Op.in]: [CallStatus.answerWaiting, CallStatus.active],
@@ -24,6 +24,8 @@ export class CallsService implements BeforeApplicationShutdown {
   constructor(
     @InjectModel(CallModel)
     private callModel: typeof CallModel,
+    @InjectModel(UserModel)
+    private userModel: typeof UserModel,
     private usersService: UsersService,
     private sequelize: Sequelize,
   ) {}
@@ -40,17 +42,28 @@ export class CallsService implements BeforeApplicationShutdown {
         individualHooks: true,
       },
     );
+
+    await this.userModel.update(
+      {
+        status: UserStatuses.offline,
+      },
+      {
+        where: {
+          status: { [Op.not]: UserStatuses.offline },
+        },
+      },
+    );
   }
 
   async findCallById(id: number): Promise<CallRecord | null> {
     return this.callModel.findByPk(id, {
       include: [
         {
-          model: User,
+          model: UserModel,
           as: 'callee',
         },
         {
-          model: User,
+          model: UserModel,
           as: 'caller',
         },
       ],
@@ -110,6 +123,10 @@ export class CallsService implements BeforeApplicationShutdown {
 
     if (callee.status === UserStatuses.offline) {
       throw new WsException(CallErrors.AgentOffline);
+    }
+
+    if (callee.status === UserStatuses.away) {
+      throw new WsException(CallErrors.AgentAway);
     }
 
     const activeCall = await this.findActiveCallBySides(

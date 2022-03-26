@@ -26,6 +26,7 @@ export class AuthService {
     const payload: AuthResponsePayload = {
       userName: user.username,
       userId: user.id,
+      webrtcNumber: user.webrtcNumber,
       role: user.role,
     };
     return {

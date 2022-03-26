@@ -6,6 +6,7 @@ import { CallsService } from 'src/calls/calls.service';
 import { CallStatus } from 'src/calls/types';
 import { EVENT_TYPES } from 'src/events/constants';
 import { EventsGateway } from 'src/events/events.gateway';
+import { TIME_EXCEED_LIMIT } from './constants';
 import {
   AnswerPayload,
   EndedPayload,
@@ -21,11 +22,31 @@ export class WebRTCService {
     private callsService: CallsService,
   ) {}
 
+  async checkTimeExceed(callId: number) {
+    setTimeout(async () => {
+      const call = await this.callsService.findCallById(callId);
+
+      if (call && call.status === CallStatus.answerWaiting) {
+        this.callsService.updateCallStatus({
+          status: CallStatus.timeExceeded,
+          id: callId,
+        });
+
+        this.eventsGateway.server
+          .to(roomPrefix(call.calleeId))
+          .to(roomPrefix(call.callerId))
+          .emit(EVENT_TYPES.SIGNALING.TIME_EXCEED);
+      }
+    }, TIME_EXCEED_LIMIT);
+  }
+
   async handleOffer(payload: WithUser<OfferPayload>) {
     const call = await this.callsService.createCall({
       calleeWebrtcNumber: payload.callNumber,
       callerWebrtcNumber: payload.user.webrtcNumber,
     });
+
+    this.checkTimeExceed(call.id);
 
     this.eventsGateway.server
       .to(roomPrefix(call.calleeId))
@@ -38,7 +59,8 @@ export class WebRTCService {
       .to(roomPrefix(call.callerId))
       .emit(EVENT_TYPES.CALL.CHANGE, {
         call: {
-          callee: pick(call.callee, ['username', 'webrtcNumber']),
+          callee: pick(call.callee, ['username', 'webrtcNumber', 'id']),
+          caller: pick(call.caller, ['username', 'webrtcNumber', 'id']),
           ...pick(call, [
             'status',
             'statusSequence',
@@ -84,6 +106,23 @@ export class WebRTCService {
       status,
       id: existingCall.id,
     });
+
+    if (status === CallStatus.cancelled) {
+      this.eventsGateway.server
+        .to(roomPrefix(existingCall.calleeId))
+        .emit(EVENT_TYPES.SIGNALING.CANCEL);
+    }
+
+    if (status === CallStatus.rejected) {
+      this.eventsGateway.server
+        .to(roomPrefix(existingCall.callerId))
+        .emit(EVENT_TYPES.SIGNALING.REJECT);
+    }
+
+    this.eventsGateway.server
+      .to(roomPrefix(existingCall.calleeId))
+      .to(roomPrefix(existingCall.callerId))
+      .emit(EVENT_TYPES.CALL.CHANGE, { call: null });
   }
 
   async handleNewIce(payload: WithUser<NewIceCandidate>) {

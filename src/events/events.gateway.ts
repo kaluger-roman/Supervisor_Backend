@@ -67,6 +67,14 @@ export class EventsGateway {
     await this.webrtcService.handleEndCall(payload, CallStatus.cancelled);
   }
 
+  @SubscribeMessage(EVENT_TYPES.SIGNALING.REJECT)
+  async RejectCall(
+    @MessageBody()
+    payload: WithUser<EndedPayload>,
+  ): Promise<void> {
+    await this.webrtcService.handleEndCall(payload, CallStatus.rejected);
+  }
+
   @SubscribeMessage(EVENT_TYPES.SIGNALING.FAILED)
   async failedCall(
     @MessageBody()

@@ -2,6 +2,7 @@ import { User } from 'src/users/types';
 
 export type CallRecord = {
   id: number;
+  status: CallStatus;
   statusSequence: CallStatus[];
   statusTimestampsSequence: number[];
   calleeWebrtcNumber: string;
@@ -24,6 +25,7 @@ export enum CallStatus {
   ended = 'ended',
   failed = 'failed',
   cancelled = 'cancelled',
+  timeExceeded = 'timeExceeded',
 }
 
 export const StatusToTimestampDict = {
@@ -39,4 +41,5 @@ export enum CallErrors {
   WrongCalleeWebrtcNumber = 'WrongCalleeWebrtcNumber',
   AgentOffline = 'AgentOffline',
   Busy = 'Busy',
+  AgentAway = 'AgentAway',
 }

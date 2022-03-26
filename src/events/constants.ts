@@ -10,6 +10,8 @@ export const EVENT_TYPES = {
     ENDED: 'ENDED',
     FAILED: 'FAILED',
     CANCEL: 'CANCEL',
+    REJECT: 'REJECT',
+    TIME_EXCEED: 'TIME_EXCEED',
   },
   CALL: {
     CHANGE: 'CHANGE_CALL',
