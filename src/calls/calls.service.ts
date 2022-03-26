@@ -71,12 +71,12 @@ export class CallsService implements BeforeApplicationShutdown {
   }
 
   async findActiveCallByCallee(
-    celleeWebrtcNumber: string,
+    calleeWebrtcNumber: string,
   ): Promise<CallRecord | null> {
     return this.callModel.findOne({
       where: {
         [Op.and]: [
-          { celleeWebrtcNumber },
+          { calleeWebrtcNumber },
           {
             status: ACTIVE_FINDER,
           },

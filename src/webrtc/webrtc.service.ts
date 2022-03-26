@@ -119,6 +119,16 @@ export class WebRTCService {
         .emit(EVENT_TYPES.SIGNALING.REJECT);
     }
 
+    if (status === CallStatus.ended) {
+      const otherSide = [existingCall.callee, existingCall.caller].find(
+        (side) => side.id !== payload.user.id,
+      );
+
+      this.eventsGateway.server
+        .to(roomPrefix(otherSide.id))
+        .emit(EVENT_TYPES.SIGNALING.ENDED);
+    }
+
     this.eventsGateway.server
       .to(roomPrefix(existingCall.calleeId))
       .to(roomPrefix(existingCall.callerId))
@@ -141,7 +151,7 @@ export class WebRTCService {
         ),
       )
       .emit(EVENT_TYPES.SIGNALING.NEW_ICE, {
-        answer: payload.iceCandidate,
+        iceCandidate: payload.iceCandidate,
       });
   }
 }
