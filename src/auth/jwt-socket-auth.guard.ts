@@ -29,7 +29,10 @@ export class WsJwtGuard implements CanActivate {
 
       const user: Omit<User, 'passwordHash'> =
         await this.authService.validateUser(decoded.userId);
-      client.join(roomPrefix(user.id));
+
+      if (!client.rooms.has(roomPrefix(user.id)))
+        await client.join(roomPrefix(user.id));
+
       context.switchToWs().getData().user = user;
 
       return Boolean(user);

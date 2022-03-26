@@ -56,7 +56,7 @@ export class CallsService implements BeforeApplicationShutdown {
   }
 
   async findCallById(id: number): Promise<CallRecord | null> {
-    return this.callModel.findByPk(id, {
+    return await this.callModel.findByPk(id, {
       include: [
         {
           model: UserModel,
@@ -143,12 +143,11 @@ export class CallsService implements BeforeApplicationShutdown {
         {
           ...callPayload,
           status: CallStatus.answerWaiting,
+          callerId: caller.id,
+          calleeId: callee.id,
         },
         { transaction: t, individualHooks: true },
       );
-
-      callRecord.setCaller(caller);
-      callRecord.setCallee(callee);
     });
 
     return await this.findCallById(callRecord.id);

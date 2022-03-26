@@ -36,6 +36,13 @@ export class WebRTCService {
           .to(roomPrefix(call.calleeId))
           .to(roomPrefix(call.callerId))
           .emit(EVENT_TYPES.SIGNALING.TIME_EXCEED);
+
+        this.eventsGateway.server
+          .to(roomPrefix(call.calleeId))
+          .to(roomPrefix(call.calleeId))
+          .emit(EVENT_TYPES.CALL.CHANGE, {
+            call: null,
+          });
       }
     }, TIME_EXCEED_LIMIT);
   }
@@ -47,6 +54,28 @@ export class WebRTCService {
     });
 
     this.checkTimeExceed(call.id);
+
+    if (!call.calleeId || !call.calleeId) {
+      this.callsService.updateCallStatus({
+        id: call.id,
+        status: CallStatus.failed,
+      });
+
+      this.eventsGateway.server
+        .to(roomPrefix(payload.user.id))
+        .emit(EVENT_TYPES.SIGNALING.FAILED, {
+          callId: call.id,
+        });
+
+      this.eventsGateway.server
+        .to(roomPrefix(call.calleeId))
+        .to(roomPrefix(call.calleeId))
+        .emit(EVENT_TYPES.CALL.CHANGE, {
+          call: null,
+        });
+
+      return;
+    }
 
     this.eventsGateway.server
       .to(roomPrefix(call.calleeId))
