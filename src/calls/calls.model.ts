@@ -1,3 +1,4 @@
+import { isEqual } from 'lodash';
 import {
   BeforeCreate,
   BeforeUpdate,
@@ -5,9 +6,11 @@ import {
   Column,
   DataType,
   ForeignKey,
+  HasOne,
   Model,
   Table,
 } from 'sequelize-typescript';
+import { Record } from 'src/records/records.model';
 import { User } from 'src/users/users.model';
 import { CallStatus } from './types';
 
@@ -45,17 +48,30 @@ export class Call extends Model {
   @BelongsTo(() => User, 'calleeId')
   callee: User;
 
+  @ForeignKey(() => Record)
+  @Column
+  recordId: number;
+
+  @HasOne(() => Record, 'recordId')
+  record: Record;
+
   @BeforeUpdate
   @BeforeCreate
   static addStatus(instance) {
-    instance.dataValues.statusSequence = [
-      ...(instance._previousDataValues.statusSequence || []),
-      instance.status,
-    ];
-
-    instance.dataValues.statusTimestampsSequence = [
-      ...(instance._previousDataValues.statusTimestampsSequence || []),
-      Date.now(),
-    ];
+    if (
+      !isEqual(
+        instance.dataValues.statusSequence,
+        instance._previousDataValues.statusSequence,
+      )
+    ) {
+      instance.dataValues.statusSequence = [
+        ...(instance._previousDataValues.statusSequence || []),
+        instance.status,
+      ];
+      instance.dataValues.statusTimestampsSequence = [
+        ...(instance._previousDataValues.statusTimestampsSequence || []),
+        Date.now(),
+      ];
+    }
   }
 }

@@ -14,4 +14,4 @@ export type AnswerPayload = {
 
 export type NewIceCandidate = { iceCandidate: RTCIceCandidate; callId: number };
 
-export type EndedPayload = { callId: number };
+export type CallIDPayload = { callId: number };

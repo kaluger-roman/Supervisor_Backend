@@ -1,7 +1,12 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  BeforeApplicationShutdown,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import * as bcrypt from 'bcrypt';
-import { User } from './types';
+import { User, UserStatuses } from './types';
 import { User as UserModel } from './users.model';
 import { Sequelize } from 'sequelize-typescript';
 import { ConfigService } from '@nestjs/config';
@@ -12,7 +17,7 @@ import { Secret as SecretModel } from './secrets.model';
 import { ChangeStatusPayload } from 'src/agent/types';
 
 @Injectable()
-export class UsersService {
+export class UsersService implements BeforeApplicationShutdown {
   constructor(
     @InjectModel(UserModel)
     private userModel: typeof UserModel,
@@ -21,6 +26,20 @@ export class UsersService {
     private sequelize: Sequelize,
     private config: ConfigService,
   ) {}
+
+  async beforeApplicationShutdown() {
+    await this.userModel.update(
+      {
+        status: UserStatuses.offline,
+      },
+      {
+        where: {
+          status: { [Op.not]: UserStatuses.offline },
+        },
+      },
+    );
+  }
+
   async findOne(id: number): Promise<User | null> {
     return this.userModel.findByPk(id);
   }

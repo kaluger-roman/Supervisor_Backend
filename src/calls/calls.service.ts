@@ -4,7 +4,7 @@ import { Sequelize } from 'sequelize-typescript';
 import { Call as CallModel } from './calls.model';
 import {
   CallErrors,
-  CallRecord,
+  CallType,
   CallStatus,
   ChangeCallStatusPayload,
 } from './types';
@@ -24,8 +24,6 @@ export class CallsService implements BeforeApplicationShutdown {
   constructor(
     @InjectModel(CallModel)
     private callModel: typeof CallModel,
-    @InjectModel(UserModel)
-    private userModel: typeof UserModel,
     private usersService: UsersService,
     private sequelize: Sequelize,
   ) {}
@@ -42,20 +40,9 @@ export class CallsService implements BeforeApplicationShutdown {
         individualHooks: true,
       },
     );
-
-    await this.userModel.update(
-      {
-        status: UserStatuses.offline,
-      },
-      {
-        where: {
-          status: { [Op.not]: UserStatuses.offline },
-        },
-      },
-    );
   }
 
-  async findCallById(id: number): Promise<CallRecord | null> {
+  async findCallById(id: number): Promise<CallType | null> {
     return await this.callModel.findByPk(id, {
       include: [
         {
@@ -72,7 +59,7 @@ export class CallsService implements BeforeApplicationShutdown {
 
   async findActiveCallByCallee(
     calleeWebrtcNumber: string,
-  ): Promise<CallRecord | null> {
+  ): Promise<CallType | null> {
     return this.callModel.findOne({
       where: {
         [Op.and]: [
@@ -88,7 +75,7 @@ export class CallsService implements BeforeApplicationShutdown {
   async findActiveCallBySides(
     callerWebrtcNumber: string,
     calleeWebrtcNumber: string,
-  ): Promise<CallRecord | null> {
+  ): Promise<CallType | null> {
     return this.callModel.findOne({
       where: {
         [Op.and]: [
@@ -102,8 +89,8 @@ export class CallsService implements BeforeApplicationShutdown {
     });
   }
 
-  async createCall(callPayload: CallConnection): Promise<CallRecord | null> {
-    let callRecord = null;
+  async createCall(callPayload: CallConnection): Promise<CallType | null> {
+    let call = null;
 
     const caller = await this.usersService.findOneByWebrtcNumber(
       callPayload.callerWebrtcNumber,
@@ -139,7 +126,7 @@ export class CallsService implements BeforeApplicationShutdown {
     }
 
     await this.sequelize.transaction(async (t) => {
-      callRecord = await this.callModel.create(
+      call = await this.callModel.create(
         {
           ...callPayload,
           status: CallStatus.answerWaiting,
@@ -150,12 +137,12 @@ export class CallsService implements BeforeApplicationShutdown {
       );
     });
 
-    return await this.findCallById(callRecord.id);
+    return await this.findCallById(call.id);
   }
 
   async updateCallStatus(
     payload: ChangeCallStatusPayload,
-  ): Promise<CallRecord | null> {
+  ): Promise<CallType | null> {
     await this.sequelize.transaction(async (t) => {
       await this.callModel.update(
         {
@@ -172,5 +159,21 @@ export class CallsService implements BeforeApplicationShutdown {
     });
 
     return await this.findCallById(payload.id);
+  }
+
+  async addRecord(recordId: number, callId: number): Promise<void> {
+    await this.sequelize.transaction(async (t) => {
+      await this.callModel.update(
+        {
+          recordId,
+        },
+        {
+          where: {
+            id: callId,
+          },
+          transaction: t,
+        },
+      );
+    });
   }
 }

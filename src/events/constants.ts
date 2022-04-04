@@ -1,7 +1,9 @@
 export const EVENT_TYPES = {
   INIT: 'INIT',
   RECORD: {
-    CAST_REQUEST: 'CAST_REQUEST',
+    START: 'START',
+    APPEND: 'APPEND',
+    STOP: 'STOP',
   },
   SIGNALING: {
     ANSWER: 'SIGNALING_ANSWER',

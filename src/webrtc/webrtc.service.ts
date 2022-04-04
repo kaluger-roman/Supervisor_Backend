@@ -9,7 +9,7 @@ import { EventsGateway } from 'src/events/events.gateway';
 import { TIME_EXCEED_LIMIT } from './constants';
 import {
   AnswerPayload,
-  EndedPayload,
+  CallIDPayload,
   NewIceCandidate,
   OfferPayload,
 } from './types';
@@ -124,7 +124,7 @@ export class WebRTCService {
       });
   }
 
-  async handleEndCall(payload: WithUser<EndedPayload>, status: CallStatus) {
+  async handleEndCall(payload: WithUser<CallIDPayload>, status: CallStatus) {
     const existingCall = await this.callsService.findCallById(payload.callId);
 
     if (!existingCall) {

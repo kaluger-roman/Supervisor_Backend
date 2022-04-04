@@ -1,10 +1,7 @@
 import { Ability, InferSubjects } from '@casl/ability';
-import { Record } from 'src/records/records.module';
 import { User } from 'src/users/types';
 
-export type Subjects =
-  | InferSubjects<typeof Record | typeof User | string>
-  | 'all';
+export type Subjects = InferSubjects<typeof User | string> | 'all';
 
 export enum Action {
   Manage = 'manage',

@@ -6,7 +6,6 @@ import {
 } from '@casl/ability';
 import { Injectable } from '@nestjs/common';
 import { Call } from 'src/calls/calls.model';
-import { Record } from 'src/records/records.module';
 import { Roles, User } from 'src/users/types';
 import { Action, AppAbility, Subjects } from './types';
 
@@ -19,10 +18,6 @@ export class CaslAbilityFactory {
 
     if (user.role === Roles.admin) {
       can(Action.Manage, 'all');
-    }
-
-    if (user.role === Roles.supervisor) {
-      can(Action.Read, Record);
     }
 
     if (Roles.user === user.role) {

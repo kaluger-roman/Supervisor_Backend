@@ -1,6 +1,7 @@
+import { RecordType } from 'src/records/types';
 import { User } from 'src/users/types';
 
-export type CallRecord = {
+export type CallType = {
   id: number;
   status: CallStatus;
   statusSequence: CallStatus[];
@@ -11,6 +12,8 @@ export type CallRecord = {
   caller: User;
   calleeId: number;
   callee: User;
+  recordId: number;
+  record: RecordType;
 };
 
 export type ChangeCallStatusPayload = {
