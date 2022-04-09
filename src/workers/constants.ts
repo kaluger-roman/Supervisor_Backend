@@ -1,0 +1,2 @@
+export const STANDARD_POOL_NUMBER = 1;
+export const STANDARD_POOL_LIFETIME = 900000;

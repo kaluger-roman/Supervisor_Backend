@@ -100,17 +100,23 @@ export class EventsGateway {
   }
 
   @SubscribeMessage(EVENT_TYPES.RECORD.START)
-  startRecord(@MessageBody() payload: WithUser<CallIDPayload>): void {
-    this.recordsService.createRecord(payload);
+  async startRecord(
+    @MessageBody() payload: WithUser<CallIDPayload>,
+  ): Promise<void> {
+    await this.recordsService.createRecord(payload);
   }
 
   @SubscribeMessage(EVENT_TYPES.RECORD.APPEND)
-  appendRecord(@MessageBody() payload: WithUser<AppendRecordPayload>): void {
-    this.recordsService.appendRecord(payload);
+  async appendRecord(
+    @MessageBody() payload: WithUser<AppendRecordPayload>,
+  ): Promise<void> {
+    await this.recordsService.appendRecord(payload);
   }
 
   @SubscribeMessage(EVENT_TYPES.RECORD.STOP)
-  stopRecord(@MessageBody() payload: WithUser<CallIDPayload>): void {
-    this.recordsService.stopRecord(payload);
+  async stopRecord(
+    @MessageBody() payload: WithUser<CallIDPayload>,
+  ): Promise<void> {
+    await this.recordsService.stopRecord(payload);
   }
 }

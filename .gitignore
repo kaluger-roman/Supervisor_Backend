@@ -2,6 +2,8 @@
 /dist
 /node_modules
 /recordsStorage
+/sr_models
+/tmp
 
 # Logs
 logs

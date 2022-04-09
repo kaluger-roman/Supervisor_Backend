@@ -26,6 +26,8 @@ import promisify = require('promisify-node');
 import { getCallSideChunkNames } from './helpers';
 import { last } from 'lodash';
 import { CallType } from 'src/calls/types';
+import { SRService } from 'src/SpeechRecognition/sr.service';
+import { SRMode } from 'src/SpeechRecognition/types';
 
 const promisedFs = promisify('fs');
 
@@ -35,6 +37,7 @@ export class RecordsService {
     @InjectModel(RecordModel)
     private recordModel: typeof RecordModel,
     private callsService: CallsService,
+    private srService: SRService,
     private sequelize: Sequelize,
   ) {}
 
@@ -142,6 +145,8 @@ export class RecordsService {
       tmpPath,
       Buffer.from(new Uint8Array(payload.recordBlob)),
     );
+
+    await this.srService.speechToText(tmpPath, SRMode.fluent);
   }
 
   async stopRecord(payload: WithUser<CallIDPayload>): Promise<void> {
