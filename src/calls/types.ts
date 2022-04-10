@@ -16,6 +16,11 @@ export type CallType = {
   record: RecordType;
 };
 
+export enum CallSide {
+  Caller = 'Caller',
+  Callee = 'Callee',
+}
+
 export type ChangeCallStatusPayload = {
   id: number;
   status: CallStatus;

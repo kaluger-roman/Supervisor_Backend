@@ -1,4 +1,5 @@
-import { CallType } from 'src/calls/types';
+import { CallSide, CallType } from 'src/calls/types';
+import { TranscriptionUnit } from 'src/SpeechRecognition/types';
 import { CallIDPayload } from 'src/webrtc/types';
 
 export type RecordType = {
@@ -7,6 +8,10 @@ export type RecordType = {
   srcCallee: string;
   callId: number;
   call: CallType;
+  transcriptionCaller: TranscriptionUnit[];
+  transcriptionCallee: TranscriptionUnit[];
+  transcriptionCallerFluent: TranscriptionUnit[];
+  transcriptionCalleeFluent: TranscriptionUnit[];
 };
 
 export enum RecordErrors {
@@ -23,3 +28,13 @@ export enum AppenderSide {
   srcCaller = 'srcCaller',
   srcCallee = 'srcCallee',
 }
+
+export type RecordFluentTrancriptionSeq = {
+  [recordId: number]: {
+    [key in CallSide]?: {
+      taskId: string;
+      src: string;
+      result?: TranscriptionUnit[];
+    }[];
+  };
+};

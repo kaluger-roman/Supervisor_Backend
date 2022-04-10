@@ -22,7 +22,11 @@ export class SRService {
     });
   }
 
-  async speechToText(src: string, mode: SRMode, id: string): Promise<SROutput> {
+  async speechToText(
+    src: string,
+    mode: SRMode,
+    id?: string,
+  ): Promise<SROutput> {
     return await new Promise((resolve) => {
       this.srPool.planTask({
         src,

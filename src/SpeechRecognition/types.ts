@@ -9,8 +9,15 @@ export type SRTask = {
   callback: (recognized: SRResult) => void;
 };
 
+export type TranscriptionUnit = {
+  conf: number;
+  end: number;
+  start: number;
+  word: string;
+};
+
 export type SRResult = {
-  result: object[];
+  result: TranscriptionUnit[];
   text: string;
 };
 

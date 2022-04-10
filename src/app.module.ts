@@ -24,6 +24,7 @@ import { AgentModule } from './agent/agent.module';
         database: config.get<string>(DB_VARIABLES.DATABASE_NAME),
         autoLoadModels: true,
         synchronize: true,
+        logging: false,
       }),
     }),
     WebRTCModule,

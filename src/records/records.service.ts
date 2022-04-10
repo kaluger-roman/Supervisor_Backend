@@ -6,9 +6,9 @@ import { WsException } from '@nestjs/websockets';
 import { WithUser } from 'src/auth/types';
 import { CallsService } from 'src/calls/calls.service';
 import {
-  AppenderSide,
   AppendRecordPayload,
   RecordErrors,
+  RecordFluentTrancriptionSeq,
   RecordType,
 } from './types';
 import { Record as RecordModel } from './records.model';
@@ -23,19 +23,30 @@ import {
 } from './constants';
 import { extension } from 'mime-types';
 import promisify = require('promisify-node');
-import { getCallSideChunkNames } from './helpers';
-import { last } from 'lodash';
-import { CallType } from 'src/calls/types';
+import {
+  buildAppenderSideName,
+  buildTranscriptionForeignId,
+  getCallSideChunkNames,
+} from './helpers';
+import { last, takeWhile } from 'lodash';
+import { CallSide, CallType } from 'src/calls/types';
 import { SRService } from 'src/SpeechRecognition/sr.service';
-import { SRMode } from 'src/SpeechRecognition/types';
+import { nanoid } from 'nanoid';
+import { SRMode, TranscriptionUnit } from 'src/SpeechRecognition/types';
+import { Transcription as TranscriptionModel } from './transcription.model';
+import { consoleBlue } from 'helpers/coloredConsole';
+import { Readable } from 'stream';
 
 const promisedFs = promisify('fs');
 
 @Injectable()
 export class RecordsService {
+  recordFluentTrancriptionSeq: RecordFluentTrancriptionSeq = {};
   constructor(
     @InjectModel(RecordModel)
     private recordModel: typeof RecordModel,
+    @InjectModel(TranscriptionModel)
+    private transcriptionModel: typeof TranscriptionModel,
     private callsService: CallsService,
     private srService: SRService,
     private sequelize: Sequelize,
@@ -47,6 +58,22 @@ export class RecordsService {
         {
           model: CallModel,
           as: 'call',
+        },
+        {
+          model: TranscriptionModel,
+          as: 'transcriptionCaller',
+        },
+        {
+          model: TranscriptionModel,
+          as: 'transcriptionCallee',
+        },
+        {
+          model: TranscriptionModel,
+          as: 'transcriptionCallerFluent',
+        },
+        {
+          model: TranscriptionModel,
+          as: 'transcriptionCalleeFluent',
         },
       ],
     });
@@ -90,10 +117,10 @@ export class RecordsService {
     callId: number,
     userId: number,
   ): Promise<{
-    appenderSide: AppenderSide;
     call: CallType;
     record: RecordType;
     recordPath: string;
+    side: CallSide;
   }> {
     const call = await this.callsService.findCallById(callId);
 
@@ -101,10 +128,7 @@ export class RecordsService {
       throw new WsException(RecordErrors.WrongCallToAttach);
     }
 
-    const appenderSide =
-      userId === call.callerId
-        ? AppenderSide.srcCaller
-        : AppenderSide.srcCallee;
+    const side = userId === call.callerId ? CallSide.Caller : CallSide.Callee;
 
     const record = await this.findRecordById(call.recordId);
 
@@ -115,13 +139,13 @@ export class RecordsService {
     return {
       recordPath,
       call,
-      appenderSide,
       record,
+      side,
     };
   }
 
   async appendRecord(payload: WithUser<AppendRecordPayload>): Promise<void> {
-    const { appenderSide, recordPath } = await this.getExistingRecord(
+    const { recordPath, record, side } = await this.getExistingRecord(
       payload.callId,
       payload.user.id,
     );
@@ -130,7 +154,7 @@ export class RecordsService {
 
     if (!format || !recordPath) return;
 
-    const sideChunks = await getCallSideChunkNames(recordPath, appenderSide);
+    const sideChunks = await getCallSideChunkNames(recordPath, side);
 
     const lastChunkNumber: number = sideChunks.length
       ? parseInt(last(sideChunks))
@@ -138,15 +162,14 @@ export class RecordsService {
 
     const tmpPath = path.resolve(
       recordPath,
-      `${lastChunkNumber + 1}_${appenderSide}_tmp.${format}`,
+      `${lastChunkNumber + 1}_${buildAppenderSideName(side)}_tmp.mp3`,
     );
 
-    await promisedFs.writeFile(
+    ffmpeg(Readable.from(Buffer.from(new Uint8Array(payload.recordBlob)))).save(
       tmpPath,
-      Buffer.from(new Uint8Array(payload.recordBlob)),
     );
 
-    await this.srService.speechToText(tmpPath, SRMode.fluent);
+    this.transcriptRecord(record.id, SRMode.fluent, side, tmpPath);
   }
 
   async stopRecord(payload: WithUser<CallIDPayload>): Promise<void> {
@@ -154,17 +177,17 @@ export class RecordsService {
       setTimeout(resolve, CHUNK_DURATION + PROCESS_TOTAL_OFFSET),
     );
 
-    const { appenderSide, record, recordPath } = await this.getExistingRecord(
+    const { side, record, recordPath } = await this.getExistingRecord(
       payload.callId,
       payload.user.id,
     );
 
     const targetPath = path.resolve(
       recordPath,
-      `${appenderSide}.${TARGET_EXT}`,
+      `${buildAppenderSideName(side)}.${TARGET_EXT}`,
     );
 
-    const sideChunks = await getCallSideChunkNames(recordPath, appenderSide);
+    const sideChunks = await getCallSideChunkNames(recordPath, side);
 
     if (!sideChunks.length) {
       return;
@@ -184,7 +207,8 @@ export class RecordsService {
         .on('end', () => {
           resolve();
         })
-        .on('error', () => {
+        .on('error', (e) => {
+          console.log('mergeReject', e);
           reject();
         });
     });
@@ -192,12 +216,92 @@ export class RecordsService {
     await this.sequelize.transaction(async (t) => {
       await this.recordModel.update(
         {
-          [appenderSide]: targetPath,
+          [buildAppenderSideName(side)]: targetPath,
         },
         { transaction: t, where: { id: record.id } },
       );
     });
+
+    if (this.recordFluentTrancriptionSeq[record.id]) {
+      delete this.recordFluentTrancriptionSeq[record.id];
+    }
+
+    this.transcriptRecord(record.id, SRMode.deep, side, targetPath);
   }
 
-  async processSpeechToText() {}
+  async transcriptRecord(
+    recordId: number,
+    mode: SRMode,
+    side: CallSide,
+    src: string,
+  ) {
+    const taskId = nanoid();
+
+    if (mode === SRMode.fluent) {
+      if (!this.recordFluentTrancriptionSeq[recordId]) {
+        this.recordFluentTrancriptionSeq[recordId] = {};
+      }
+
+      if (!this.recordFluentTrancriptionSeq[recordId][side]) {
+        this.recordFluentTrancriptionSeq[recordId][side] = [];
+      }
+
+      this.recordFluentTrancriptionSeq[recordId][side].push({ taskId, src });
+    }
+
+    const result = await this.srService.speechToText(src, mode, taskId);
+    const record = await this.findRecordById(recordId);
+
+    let unitsToWrite: TranscriptionUnit[] = [];
+
+    if (mode === SRMode.fluent) {
+      this.recordFluentTrancriptionSeq[recordId][side] =
+        this.recordFluentTrancriptionSeq[recordId][side].map((task) =>
+          task.taskId === taskId ? { ...task, result: result.result } : task,
+        );
+
+      const tasksToWrite = takeWhile(
+        this.recordFluentTrancriptionSeq[recordId][side],
+        (value) => !!value.result,
+      );
+
+      const transcripts =
+        side === CallSide.Callee
+          ? record.transcriptionCalleeFluent
+          : record.transcriptionCallerFluent;
+      const lastTimestamp = transcripts.length ? last(transcripts).end : 0;
+
+      for (let i = 0; i < tasksToWrite.length; i++) {
+        const curTask = tasksToWrite[i];
+
+        const duration = await new Promise<number>((resolve) => {
+          ffmpeg.ffprobe(curTask.src, (_, data) =>
+            resolve(isFinite(data.format.duration) ? data.format.duration : 0),
+          );
+        });
+
+        curTask.result.forEach((unit, inx, arr) => {
+          unitsToWrite.push({
+            ...unit,
+            start: Number(lastTimestamp) + Number(unit.start),
+            end:
+              Number(lastTimestamp) +
+              Number(inx === arr.length - 1 ? duration : unit.end),
+          });
+        });
+      }
+    } else {
+      unitsToWrite = result.result;
+    }
+
+    await this.sequelize.transaction(async (t) => {
+      await this.transcriptionModel.bulkCreate(
+        unitsToWrite.map((unit) => ({
+          ...unit,
+          [buildTranscriptionForeignId(side, mode)]: record.id,
+        })),
+        { transaction: t },
+      );
+    });
+  }
 }
