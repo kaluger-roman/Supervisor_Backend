@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import * as bcrypt from 'bcrypt';
-import { User, UserStatuses } from './types';
+import { FindUsersPayload, User, UserStatuses } from './types';
 import { User as UserModel } from './users.model';
 import { Sequelize } from 'sequelize-typescript';
 import { ConfigService } from '@nestjs/config';
@@ -15,6 +15,7 @@ import { AuthPayload, WithUser } from 'src/auth/types';
 import { Op } from 'sequelize';
 import { Secret as SecretModel } from './secrets.model';
 import { ChangeStatusPayload } from 'src/agent/types';
+import { Where } from 'sequelize/types/utils';
 
 @Injectable()
 export class UsersService implements BeforeApplicationShutdown {
@@ -46,6 +47,23 @@ export class UsersService implements BeforeApplicationShutdown {
 
   async findOneByWebrtcNumber(webrtcNumber: string): Promise<User | null> {
     return this.userModel.findOne({ where: { webrtcNumber: webrtcNumber } });
+  }
+
+  async findByFilters(payload: FindUsersPayload): Promise<User[]> {
+    const where: { [key: string]: Where } = {};
+
+    if (payload.username) {
+      where.username = this.sequelize.where(
+        this.sequelize.fn('LOWER', this.sequelize.col('username')),
+        'LIKE',
+        '%' + payload.username.toLowerCase() + '%',
+      );
+    }
+
+    return this.userModel.findAll({
+      where,
+      limit: payload.limit ? Number(payload.limit) : undefined,
+    });
   }
 
   async findByNameAndEmail(

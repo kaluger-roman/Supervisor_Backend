@@ -26,3 +26,8 @@ export enum UserStatuses {
   offline = 'offline',
   away = 'away',
 }
+
+export type FindUsersPayload = {
+  username: string;
+  limit?: string;
+};

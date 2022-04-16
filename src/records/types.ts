@@ -14,6 +14,17 @@ export type RecordType = {
   transcriptionCalleeFluent: TranscriptionUnit[];
 };
 
+export type RecordFilters = {
+  calleesList: string[];
+  callersList: string[];
+  duration: DurationFilter;
+};
+
+export type DurationFilter = {
+  from: number;
+  to: number;
+};
+
 export enum RecordErrors {
   WrongCallToAttach = 'WrongCallToAttach',
   RecordExist = 'RecordExist',

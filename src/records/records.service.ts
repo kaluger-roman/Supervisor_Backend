@@ -36,6 +36,7 @@ import { SRMode, TranscriptionUnit } from 'src/SpeechRecognition/types';
 import { Transcription as TranscriptionModel } from './transcription.model';
 import { consoleBlue } from 'helpers/coloredConsole';
 import { Readable } from 'stream';
+import { existsSync } from 'fs';
 
 const promisedFs = promisify('fs');
 
@@ -213,6 +214,17 @@ export class RecordsService {
         });
     });
 
+    const callerPath = path.resolve(
+      recordPath,
+      `${buildAppenderSideName(CallSide.Callee)}.${TARGET_EXT}`,
+    );
+
+    const calleePath = path.resolve(
+      recordPath,
+      `${buildAppenderSideName(CallSide.Caller)}.${TARGET_EXT}`,
+    );
+
+    const mergedPath = path.resolve(recordPath, `srcMerged.${TARGET_EXT}`);
     await this.sequelize.transaction(async (t) => {
       await this.recordModel.update(
         {
@@ -220,6 +232,33 @@ export class RecordsService {
         },
         { transaction: t, where: { id: record.id } },
       );
+
+      if (
+        existsSync(callerPath) &&
+        existsSync(calleePath) &&
+        !existsSync(mergedPath)
+      ) {
+        await new Promise((resolve) =>
+          ffmpeg()
+            .input(callerPath)
+            .input(calleePath)
+            .complexFilter([
+              {
+                filter: 'amix',
+                options: { inputs: 2, duration: 'longest' },
+              },
+            ])
+            .on('end', resolve)
+            .saveToFile(mergedPath),
+        );
+
+        await this.recordModel.update(
+          {
+            srcMerged: mergedPath,
+          },
+          { transaction: t, where: { id: record.id } },
+        );
+      }
     });
 
     if (this.recordFluentTrancriptionSeq[record.id]) {

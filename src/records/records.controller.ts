@@ -1,16 +1,10 @@
-import { Controller, Get, Post, UseGuards } from '@nestjs/common';
-import { CheckPolicies } from 'src/casl/casl.decorator';
-import { PoliciesGuard } from 'src/casl/casl.guard';
-import { Action, AppAbility } from 'src/casl/types';
+import { Body, Controller, Get, Post } from '@nestjs/common';
+import { RecordFilters } from './types';
 
 @Controller('api/records')
 export class AppController {
   @Get()
-  getRecord(): string {
-    return '';
-  }
-  @Post()
-  saveRecord(): string {
+  getRecords(@Body() body: RecordFilters): string {
     return '';
   }
 }

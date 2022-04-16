@@ -15,5 +15,8 @@ export const ROUTES = {
       BASE: BASE_API_ROUTE + '/agent',
       STATUS: '/status',
     },
+    USERS: {
+      BASE: BASE_API_ROUTE + '/users',
+    },
   },
 };
