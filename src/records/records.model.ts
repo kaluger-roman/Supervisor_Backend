@@ -1,6 +1,7 @@
 import {
   BelongsTo,
   Column,
+  DataType,
   ForeignKey,
   HasMany,
   Model,
@@ -22,6 +23,9 @@ export class Record extends Model {
 
   @Column
   srcMerged: string;
+
+  @Column({ type: DataType.DECIMAL })
+  duration: number;
 
   @HasMany(() => Transcription, 'transcriptionCallerId')
   transcriptionCaller: Transcription[];

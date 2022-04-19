@@ -7,8 +7,11 @@ import { WithUser } from 'src/auth/types';
 import { CallsService } from 'src/calls/calls.service';
 import {
   AppendRecordPayload,
+  FilteredRecords,
   RecordErrors,
+  RecordFilters,
   RecordFluentTrancriptionSeq,
+  RecordIncluders,
   RecordType,
 } from './types';
 import { Record as RecordModel } from './records.model';
@@ -27,9 +30,10 @@ import {
   buildAppenderSideName,
   buildTranscriptionForeignId,
   getCallSideChunkNames,
+  getDuration,
 } from './helpers';
 import { last, takeWhile } from 'lodash';
-import { CallSide, CallType } from 'src/calls/types';
+import { CallSide, CallStatus, CallType } from 'src/calls/types';
 import { SRService } from 'src/SpeechRecognition/sr.service';
 import { nanoid } from 'nanoid';
 import { SRMode, TranscriptionUnit } from 'src/SpeechRecognition/types';
@@ -37,8 +41,60 @@ import { Transcription as TranscriptionModel } from './transcription.model';
 import { consoleBlue } from 'helpers/coloredConsole';
 import { Readable } from 'stream';
 import { existsSync } from 'fs';
+import { Where } from 'sequelize/types/utils';
+import { Op } from 'sequelize';
+import { User as UserModel } from 'src/users/users.model';
 
 const promisedFs = promisify('fs');
+
+const includers = (mode: RecordIncluders) => {
+  const res = [
+    {
+      model: CallModel,
+      as: 'call',
+      include: [
+        {
+          model: UserModel,
+          as: 'caller',
+        },
+        {
+          model: UserModel,
+          as: 'callee',
+        },
+      ],
+    },
+  ] as any;
+
+  if (mode === RecordIncluders.base) return res;
+
+  if (mode === RecordIncluders.deep) {
+    res.push(
+      {
+        model: TranscriptionModel,
+        as: 'transcriptionCaller',
+      },
+      {
+        model: TranscriptionModel,
+        as: 'transcriptionCallee',
+      },
+    );
+  }
+
+  if (mode === RecordIncluders.fluent) {
+    res.push(
+      {
+        model: TranscriptionModel,
+        as: 'transcriptionCallerFluent',
+      },
+      {
+        model: TranscriptionModel,
+        as: 'transcriptionCalleeFluent',
+      },
+    );
+  }
+
+  return res;
+};
 
 @Injectable()
 export class RecordsService {
@@ -55,29 +111,42 @@ export class RecordsService {
 
   async findRecordById(id: number): Promise<RecordType | null> {
     return await this.recordModel.findByPk(id, {
-      include: [
-        {
-          model: CallModel,
-          as: 'call',
-        },
-        {
-          model: TranscriptionModel,
-          as: 'transcriptionCaller',
-        },
-        {
-          model: TranscriptionModel,
-          as: 'transcriptionCallee',
-        },
-        {
-          model: TranscriptionModel,
-          as: 'transcriptionCallerFluent',
-        },
-        {
-          model: TranscriptionModel,
-          as: 'transcriptionCalleeFluent',
-        },
-      ],
+      include: includers(RecordIncluders.all),
     });
+  }
+
+  async findByFilters(
+    payload: RecordFilters,
+    includeMode: RecordIncluders,
+  ): Promise<FilteredRecords> {
+    const where = {
+      '$call.callerId$': payload.callersList
+        ? { [Op.in]: payload.callersList }
+        : undefined,
+      '$call.calleeId$': payload.calleesList
+        ? { [Op.in]: payload.calleesList }
+        : undefined,
+      '$call.status$': { [Op.in]: payload.status },
+      duration: {
+        [Op.between]: [payload.duration.from, payload.duration.to],
+      },
+    };
+
+    const total = await this.recordModel.count({
+      where,
+      include: includers(includeMode),
+    });
+
+    const records = await this.recordModel.findAll({
+      where,
+      limit: payload.limit ? Number(payload.limit) : undefined,
+      offset: payload.page
+        ? (Number(payload.page) - 1) * Number(payload.limit)
+        : undefined,
+      include: includers(includeMode),
+    });
+
+    return { total, records };
   }
 
   async createRecord(
@@ -252,9 +321,12 @@ export class RecordsService {
             .saveToFile(mergedPath),
         );
 
+        const duration = await getDuration(mergedPath);
+
         await this.recordModel.update(
           {
             srcMerged: mergedPath,
+            duration,
           },
           { transaction: t, where: { id: record.id } },
         );
@@ -308,16 +380,12 @@ export class RecordsService {
         side === CallSide.Callee
           ? record.transcriptionCalleeFluent
           : record.transcriptionCallerFluent;
-      const lastTimestamp = transcripts.length ? last(transcripts).end : 0;
+      const lastTimestamp = transcripts?.length ? last(transcripts).end : 0;
 
       for (let i = 0; i < tasksToWrite.length; i++) {
         const curTask = tasksToWrite[i];
 
-        const duration = await new Promise<number>((resolve) => {
-          ffmpeg.ffprobe(curTask.src, (_, data) =>
-            resolve(isFinite(data.format.duration) ? data.format.duration : 0),
-          );
-        });
+        const duration = await getDuration(curTask.src);
 
         curTask.result.forEach((unit, inx, arr) => {
           unitsToWrite.push({

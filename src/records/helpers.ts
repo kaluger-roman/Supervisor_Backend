@@ -2,6 +2,7 @@ import promisify = require('promisify-node');
 import { CallSide } from 'src/calls/types';
 import { SRMode } from 'src/SpeechRecognition/types';
 import { AppenderSide } from './types';
+import * as ffmpeg from 'fluent-ffmpeg';
 
 const promisedFs = promisify('fs');
 
@@ -26,3 +27,10 @@ export const buildTranscriptionForeignId = (side: CallSide, mode: SRMode) =>
 
 export const buildAppenderSideName = (side: CallSide) =>
   `src${side}` as AppenderSide;
+
+export const getDuration = async (src: string): Promise<number> =>
+  new Promise<number>((resolve) => {
+    ffmpeg.ffprobe(src, (_, data) =>
+      resolve(isFinite(data.format.duration) ? data.format.duration : 0),
+    );
+  });

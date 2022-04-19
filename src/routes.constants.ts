@@ -18,5 +18,11 @@ export const ROUTES = {
     USERS: {
       BASE: BASE_API_ROUTE + '/users',
     },
+    RECORDS: {
+      BASE: BASE_API_ROUTE + '/records',
+      FULL: '/full',
+      SRC: '/src',
+      TRANSCRIPTION: '/transcription',
+    },
   },
 };
