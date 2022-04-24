@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { pick } from 'lodash';
 import { CallStatus } from 'src/calls/types';
 import { ROUTES } from 'src/routes.constants';
@@ -8,7 +8,6 @@ import {
   FilteredRecords,
   RecordFiltersPayload,
   RecordIncluders,
-  RecordType,
   SrcPayload,
   TranscriptionPayload,
 } from './types';
