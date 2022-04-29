@@ -1,8 +1,9 @@
 import promisify = require('promisify-node');
 import { CallSide } from 'src/calls/types';
-import { SRMode } from 'src/SpeechRecognition/types';
+import { SRMode, TranscriptionUnit } from 'src/SpeechRecognition/types';
 import { AppenderSide } from './types';
 import * as ffmpeg from 'fluent-ffmpeg';
+import { pick } from 'lodash';
 
 const promisedFs = promisify('fs');
 
@@ -34,3 +35,6 @@ export const getDuration = async (src: string): Promise<number> =>
       resolve(isFinite(data.format.duration) ? data.format.duration : 0),
     );
   });
+
+export const pickTranscriptFields = (val: TranscriptionUnit) =>
+  pick(val, ['conf', 'end', 'id', 'start', 'word']);

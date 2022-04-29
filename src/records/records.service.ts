@@ -67,7 +67,7 @@ const includers = (mode: RecordIncluders) => {
 
   if (mode === RecordIncluders.base) return res;
 
-  if (mode === RecordIncluders.deep) {
+  if ([RecordIncluders.deep, RecordIncluders.all].includes(mode)) {
     res.push(
       {
         model: TranscriptionModel,
@@ -80,7 +80,7 @@ const includers = (mode: RecordIncluders) => {
     );
   }
 
-  if (mode === RecordIncluders.fluent) {
+  if ([RecordIncluders.fluent, RecordIncluders.all].includes(mode)) {
     res.push(
       {
         model: TranscriptionModel,

@@ -12,6 +12,7 @@ import {
   TranscriptionPayload,
 } from './types';
 import { TranscriptionUnit } from 'src/SpeechRecognition/types';
+import { pickTranscriptFields } from './helpers';
 
 @Controller(ROUTES.API.RECORDS.BASE)
 export class RecordsController {
@@ -68,8 +69,8 @@ export class RecordsController {
       return { caller: null, callee: null };
 
     return {
-      caller: record.transcriptionCaller,
-      callee: record.transcriptionCallee,
+      caller: record.transcriptionCaller.map(pickTranscriptFields),
+      callee: record.transcriptionCallee.map(pickTranscriptFields),
     };
   }
 }

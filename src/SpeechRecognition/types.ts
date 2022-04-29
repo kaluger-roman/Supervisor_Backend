@@ -14,6 +14,7 @@ export type TranscriptionUnit = {
   end: number;
   start: number;
   word: string;
+  id: number;
 };
 
 export type SRResult = {
