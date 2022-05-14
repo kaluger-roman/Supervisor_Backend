@@ -1,0 +1,1280 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>supervisor documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top visible-xs">
+            <a href="../" class="navbar-brand">supervisor documentation</a>
+            <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="hidden-xs menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content miscellaneous-variables">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li>Miscellaneous</li>
+  <li>Variables</li>
+</ol>
+
+<section>
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <ul class="index-list">
+                        <li>
+                            <a href="#ACTIVE_FINDER" title="src/calls/calls.service.ts" ><b>ACTIVE_FINDER</b>&nbsp;&nbsp;&nbsp;(src/.../calls.service.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#BASE_API_ROUTE" title="src/routes.constants.ts" ><b>BASE_API_ROUTE</b>&nbsp;&nbsp;&nbsp;(src/.../routes.constants.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#BCRYPT_SAULT" title="src/users/constants.ts" ><b>BCRYPT_SAULT</b>&nbsp;&nbsp;&nbsp;(src/.../constants.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#buildAppenderSideName" title="src/records/helpers.ts" ><b>buildAppenderSideName</b>&nbsp;&nbsp;&nbsp;(src/.../helpers.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#buildTranscriptionFiledName" title="src/records/helpers.ts" ><b>buildTranscriptionFiledName</b>&nbsp;&nbsp;&nbsp;(src/.../helpers.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#buildTranscriptionForeignId" title="src/records/helpers.ts" ><b>buildTranscriptionForeignId</b>&nbsp;&nbsp;&nbsp;(src/.../helpers.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#CHECK_POLICIES_KEY" title="src/casl/constants.ts" ><b>CHECK_POLICIES_KEY</b>&nbsp;&nbsp;&nbsp;(src/.../constants.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#CheckPolicies" title="src/casl/casl.decorator.ts" ><b>CheckPolicies</b>&nbsp;&nbsp;&nbsp;(src/.../casl.decorator.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#CHUNK_DURATION" title="src/records/constants.ts" ><b>CHUNK_DURATION</b>&nbsp;&nbsp;&nbsp;(src/.../constants.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#consoleBlue" title="helpers/coloredConsole.ts" ><b>consoleBlue</b>&nbsp;&nbsp;&nbsp;(helpers/.../coloredConsole.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#DB_VARIABLES" title="src/constants.ts" ><b>DB_VARIABLES</b>&nbsp;&nbsp;&nbsp;(src/.../constants.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#EVENT_TYPES" title="src/events/constants.ts" ><b>EVENT_TYPES</b>&nbsp;&nbsp;&nbsp;(src/.../constants.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#getCallSideChunkNames" title="src/records/helpers.ts" ><b>getCallSideChunkNames</b>&nbsp;&nbsp;&nbsp;(src/.../helpers.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#getDuration" title="src/records/helpers.ts" ><b>getDuration</b>&nbsp;&nbsp;&nbsp;(src/.../helpers.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#includers" title="src/records/records.service.ts" ><b>includers</b>&nbsp;&nbsp;&nbsp;(src/.../records.service.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#IS_PUBLIC_KEY" title="src/auth/constants.ts" ><b>IS_PUBLIC_KEY</b>&nbsp;&nbsp;&nbsp;(src/.../constants.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#JWT_EXPIRES" title="src/auth/constants.ts" ><b>JWT_EXPIRES</b>&nbsp;&nbsp;&nbsp;(src/.../constants.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#JWT_SECRET_NAME" title="src/auth/constants.ts" ><b>JWT_SECRET_NAME</b>&nbsp;&nbsp;&nbsp;(src/.../constants.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#JwtModuleRegistered" title="src/auth/auth.module.ts" ><b>JwtModuleRegistered</b>&nbsp;&nbsp;&nbsp;(src/.../auth.module.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#pickTranscriptFields" title="src/records/helpers.ts" ><b>pickTranscriptFields</b>&nbsp;&nbsp;&nbsp;(src/.../helpers.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#PROCESS_TOTAL_OFFSET" title="src/records/constants.ts" ><b>PROCESS_TOTAL_OFFSET</b>&nbsp;&nbsp;&nbsp;(src/.../constants.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#promisedFs" title="src/records/helpers.ts" ><b>promisedFs</b>&nbsp;&nbsp;&nbsp;(src/.../helpers.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#promisedFs" title="src/records/records.service.ts" ><b>promisedFs</b>&nbsp;&nbsp;&nbsp;(src/.../records.service.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#Public" title="src/auth/jwt-auth.guard.ts" ><b>Public</b>&nbsp;&nbsp;&nbsp;(src/.../jwt-auth.guard.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#RECORD_FILE_PREFIX" title="src/records/constants.ts" ><b>RECORD_FILE_PREFIX</b>&nbsp;&nbsp;&nbsp;(src/.../constants.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#RECORDS_FILE_PATH" title="src/records/constants.ts" ><b>RECORDS_FILE_PATH</b>&nbsp;&nbsp;&nbsp;(src/.../constants.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#roomPrefix" title="src/auth/helpers.ts" ><b>roomPrefix</b>&nbsp;&nbsp;&nbsp;(src/.../helpers.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ROUTES" title="src/routes.constants.ts" ><b>ROUTES</b>&nbsp;&nbsp;&nbsp;(src/.../routes.constants.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#SR_POOL_LIFETIME" title="src/SpeechRecognition/constants.ts" ><b>SR_POOL_LIFETIME</b>&nbsp;&nbsp;&nbsp;(src/.../constants.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#SR_POOL_NUMBER" title="src/SpeechRecognition/constants.ts" ><b>SR_POOL_NUMBER</b>&nbsp;&nbsp;&nbsp;(src/.../constants.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#SRProcessPath" title="src/SpeechRecognition/sr.service.ts" ><b>SRProcessPath</b>&nbsp;&nbsp;&nbsp;(src/.../sr.service.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#STANDARD_POOL_LIFETIME" title="src/workers/constants.ts" ><b>STANDARD_POOL_LIFETIME</b>&nbsp;&nbsp;&nbsp;(src/.../constants.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#STANDARD_POOL_NUMBER" title="src/workers/constants.ts" ><b>STANDARD_POOL_NUMBER</b>&nbsp;&nbsp;&nbsp;(src/.../constants.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#StatusToTimestampDict" title="src/calls/types.ts" ><b>StatusToTimestampDict</b>&nbsp;&nbsp;&nbsp;(src/.../types.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#TARGET_EXT" title="src/records/constants.ts" ><b>TARGET_EXT</b>&nbsp;&nbsp;&nbsp;(src/.../constants.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#TIME_EXCEED_LIMIT" title="src/webrtc/constants.ts" ><b>TIME_EXCEED_LIMIT</b>&nbsp;&nbsp;&nbsp;(src/.../constants.ts)</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+    <h3>src/calls/calls.service.ts</h3>
+    <section>
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ACTIVE_FINDER"></a>
+                    <span class="name">
+                        <span ><b>ACTIVE_FINDER</b></span>
+                        <a href="#ACTIVE_FINDER"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/object" target="_blank" >object</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>{
+  [Op.in]: [CallStatus.answerWaiting, CallStatus.active],
+}</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/routes.constants.ts</h3>
+    <section>
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="BASE_API_ROUTE"></a>
+                    <span class="name">
+                        <span ><b>BASE_API_ROUTE</b></span>
+                        <a href="#BASE_API_ROUTE"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&#x27;api&#x27;</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ROUTES"></a>
+                    <span class="name">
+                        <span ><b>ROUTES</b></span>
+                        <a href="#ROUTES"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/object" target="_blank" >object</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>{
+  API: {
+    AUTH: {
+      BASE: BASE_API_ROUTE + &#x27;/auth&#x27;,
+      LOGIN: &#x27;login&#x27;,
+      REGISTER: &#x27;register&#x27;,
+      LOGOUT: &#x27;/logout&#x27;,
+      RECOVER_PASSWORD: &#x27;/recover_password&#x27;,
+      CHANGE_PASSWORD: &#x27;/change_password&#x27;,
+      VERIFY: &#x27;/verify_token&#x27;,
+    },
+    AGENT: {
+      BASE: BASE_API_ROUTE + &#x27;/agent&#x27;,
+      STATUS: &#x27;/status&#x27;,
+    },
+    USERS: {
+      BASE: BASE_API_ROUTE + &#x27;/users&#x27;,
+    },
+    RECORDS: {
+      BASE: BASE_API_ROUTE + &#x27;/records&#x27;,
+      FULL: &#x27;/full&#x27;,
+      SRC: &#x27;/src&#x27;,
+      TRANSCRIPTION: &#x27;/transcription&#x27;,
+    },
+  },
+}</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/users/constants.ts</h3>
+    <section>
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="BCRYPT_SAULT"></a>
+                    <span class="name">
+                        <span ><b>BCRYPT_SAULT</b></span>
+                        <a href="#BCRYPT_SAULT"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&#x27;BCRYPT_SAULT&#x27;</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/records/helpers.ts</h3>
+    <section>
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="buildAppenderSideName"></a>
+                    <span class="name">
+                        <span ><b>buildAppenderSideName</b></span>
+                        <a href="#buildAppenderSideName"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>(side: CallSide) &#x3D;&gt;
+  &#x60;src${side}&#x60; as AppenderSide</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="buildTranscriptionFiledName"></a>
+                    <span class="name">
+                        <span ><b>buildTranscriptionFiledName</b></span>
+                        <a href="#buildTranscriptionFiledName"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>(side: CallSide, mode: SRMode) &#x3D;&gt;
+  &#x60;transcription${side}${mode &#x3D;&#x3D;&#x3D; SRMode.fluent ? &#x27;Fluent&#x27; : &#x27;&#x27;}&#x60;</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="buildTranscriptionForeignId"></a>
+                    <span class="name">
+                        <span ><b>buildTranscriptionForeignId</b></span>
+                        <a href="#buildTranscriptionForeignId"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>(side: CallSide, mode: SRMode) &#x3D;&gt;
+  &#x60;${buildTranscriptionFiledName(side, mode)}Id&#x60;</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getCallSideChunkNames"></a>
+                    <span class="name">
+                        <span ><b>getCallSideChunkNames</b></span>
+                        <a href="#getCallSideChunkNames"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>async (
+  recordPath: string,
+  side: CallSide,
+) &#x3D;&gt; {
+  const files: string[] &#x3D; await promisedFs.readdir(recordPath);
+
+  return files
+    .filter((name) &#x3D;&gt;
+      new RegExp(&#x60;^\\d+_${buildAppenderSideName(side)}&#x60;).test(name),
+    )
+    .sort((a, b) &#x3D;&gt; parseInt(a) - parseInt(b));
+}</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getDuration"></a>
+                    <span class="name">
+                        <span ><b>getDuration</b></span>
+                        <a href="#getDuration"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>async (src: string): Promise&lt;number&gt; &#x3D;&gt;
+  new Promise&lt;number&gt;((resolve) &#x3D;&gt; {
+    ffmpeg.ffprobe(src, (_, data) &#x3D;&gt;
+      resolve(isFinite(data.format.duration) ? data.format.duration : 0),
+    );
+  })</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="pickTranscriptFields"></a>
+                    <span class="name">
+                        <span ><b>pickTranscriptFields</b></span>
+                        <a href="#pickTranscriptFields"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>(val: TranscriptionUnit) &#x3D;&gt;
+  pick(val, [&#x27;conf&#x27;, &#x27;end&#x27;, &#x27;id&#x27;, &#x27;start&#x27;, &#x27;word&#x27;])</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="promisedFs"></a>
+                    <span class="name">
+                        <span ><b>promisedFs</b></span>
+                        <a href="#promisedFs"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>promisify(&#x27;fs&#x27;)</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/casl/constants.ts</h3>
+    <section>
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="CHECK_POLICIES_KEY"></a>
+                    <span class="name">
+                        <span ><b>CHECK_POLICIES_KEY</b></span>
+                        <a href="#CHECK_POLICIES_KEY"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&#x27;check_policy&#x27;</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/casl/casl.decorator.ts</h3>
+    <section>
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="CheckPolicies"></a>
+                    <span class="name">
+                        <span ><b>CheckPolicies</b></span>
+                        <a href="#CheckPolicies"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>(...handlers: PolicyHandler[]) &#x3D;&gt;
+  SetMetadata(CHECK_POLICIES_KEY, handlers)</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/records/constants.ts</h3>
+    <section>
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="CHUNK_DURATION"></a>
+                    <span class="name">
+                        <span ><b>CHUNK_DURATION</b></span>
+                        <a href="#CHUNK_DURATION"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>7000</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="PROCESS_TOTAL_OFFSET"></a>
+                    <span class="name">
+                        <span ><b>PROCESS_TOTAL_OFFSET</b></span>
+                        <a href="#PROCESS_TOTAL_OFFSET"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>1000</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="RECORD_FILE_PREFIX"></a>
+                    <span class="name">
+                        <span ><b>RECORD_FILE_PREFIX</b></span>
+                        <a href="#RECORD_FILE_PREFIX"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&#x27;call_record_&#x27;</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="RECORDS_FILE_PATH"></a>
+                    <span class="name">
+                        <span ><b>RECORDS_FILE_PATH</b></span>
+                        <a href="#RECORDS_FILE_PATH"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>path.resolve(&#x27;recordsStorage&#x27;)</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="TARGET_EXT"></a>
+                    <span class="name">
+                        <span ><b>TARGET_EXT</b></span>
+                        <a href="#TARGET_EXT"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&#x27;mp3&#x27;</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>helpers/coloredConsole.ts</h3>
+    <section>
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="consoleBlue"></a>
+                    <span class="name">
+                        <span ><b>consoleBlue</b></span>
+                        <a href="#consoleBlue"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>(...args) &#x3D;&gt; {
+  console.log(&#x27;\x1b[34m%s\x1b[0m&#x27;, ...args);
+}</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/constants.ts</h3>
+    <section>
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="DB_VARIABLES"></a>
+                    <span class="name">
+                        <span ><b>DB_VARIABLES</b></span>
+                        <a href="#DB_VARIABLES"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/object" target="_blank" >object</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>{
+  DATABASE_USER: &#x27;DATABASE_USER&#x27;,
+  DATABASE_PASSWORD: &#x27;DATABASE_PASSWORD&#x27;,
+  DATABASE_PORT: &#x27;DATABASE_PORT&#x27;,
+  DATABASE_HOST: &#x27;DATABASE_HOST&#x27;,
+  DATABASE_DIALECT: &#x27;DATABASE_DIALECT&#x27;,
+  DATABASE_NAME: &#x27;DATABASE_NAME&#x27;,
+}</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/events/constants.ts</h3>
+    <section>
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="EVENT_TYPES"></a>
+                    <span class="name">
+                        <span ><b>EVENT_TYPES</b></span>
+                        <a href="#EVENT_TYPES"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/object" target="_blank" >object</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>{
+  INIT: &#x27;INIT&#x27;,
+  RECORD: {
+    START: &#x27;START&#x27;,
+    APPEND: &#x27;APPEND&#x27;,
+    STOP: &#x27;STOP&#x27;,
+  },
+  SIGNALING: {
+    ANSWER: &#x27;SIGNALING_ANSWER&#x27;,
+    OFFER: &#x27;SIGNALING_OFFER&#x27;,
+    NEW_ICE: &#x27;NEW_ICE_CANDIDATE&#x27;,
+    ENDED: &#x27;ENDED&#x27;,
+    FAILED: &#x27;FAILED&#x27;,
+    CANCEL: &#x27;CANCEL&#x27;,
+    REJECT: &#x27;REJECT&#x27;,
+    TIME_EXCEED: &#x27;TIME_EXCEED&#x27;,
+  },
+  CALL: {
+    CHANGE: &#x27;CHANGE_CALL&#x27;,
+  },
+}</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/records/records.service.ts</h3>
+    <section>
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="includers"></a>
+                    <span class="name">
+                        <span ><b>includers</b></span>
+                        <a href="#includers"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>(mode: RecordIncluders) &#x3D;&gt; {
+  const res &#x3D; [
+    {
+      model: CallModel,
+      as: &#x27;call&#x27;,
+      include: [
+        {
+          model: UserModel,
+          as: &#x27;caller&#x27;,
+        },
+        {
+          model: UserModel,
+          as: &#x27;callee&#x27;,
+        },
+      ],
+    },
+  ] as any;
+
+  if (mode &#x3D;&#x3D;&#x3D; RecordIncluders.base) return res;
+
+  if ([RecordIncluders.deep, RecordIncluders.all].includes(mode)) {
+    res.push(
+      {
+        model: TranscriptionModel,
+        as: &#x27;transcriptionCaller&#x27;,
+      },
+      {
+        model: TranscriptionModel,
+        as: &#x27;transcriptionCallee&#x27;,
+      },
+    );
+  }
+
+  if ([RecordIncluders.fluent, RecordIncluders.all].includes(mode)) {
+    res.push(
+      {
+        model: TranscriptionModel,
+        as: &#x27;transcriptionCallerFluent&#x27;,
+      },
+      {
+        model: TranscriptionModel,
+        as: &#x27;transcriptionCalleeFluent&#x27;,
+      },
+    );
+  }
+
+  return res;
+}</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="promisedFs"></a>
+                    <span class="name">
+                        <span ><b>promisedFs</b></span>
+                        <a href="#promisedFs"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>promisify(&#x27;fs&#x27;)</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/auth/constants.ts</h3>
+    <section>
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="IS_PUBLIC_KEY"></a>
+                    <span class="name">
+                        <span ><b>IS_PUBLIC_KEY</b></span>
+                        <a href="#IS_PUBLIC_KEY"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&#x27;isPublic&#x27;</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="JWT_EXPIRES"></a>
+                    <span class="name">
+                        <span ><b>JWT_EXPIRES</b></span>
+                        <a href="#JWT_EXPIRES"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&#x27;12h&#x27;</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="JWT_SECRET_NAME"></a>
+                    <span class="name">
+                        <span ><b>JWT_SECRET_NAME</b></span>
+                        <a href="#JWT_SECRET_NAME"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&#x27;JWT_SECRET&#x27;</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/auth/auth.module.ts</h3>
+    <section>
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="JwtModuleRegistered"></a>
+                    <span class="name">
+                        <span ><b>JwtModuleRegistered</b></span>
+                        <a href="#JwtModuleRegistered"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>JwtModule.registerAsync({
+  inject: [ConfigService],
+  useFactory: (config: ConfigService) &#x3D;&gt; ({
+    secret: config.get&lt;string&gt;(JWT_SECRET_NAME),
+    signOptions: { expiresIn: JWT_EXPIRES },
+  }),
+})</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/auth/jwt-auth.guard.ts</h3>
+    <section>
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="Public"></a>
+                    <span class="name">
+                        <span ><b>Public</b></span>
+                        <a href="#Public"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>() &#x3D;&gt; SetMetadata(IS_PUBLIC_KEY, true)</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/auth/helpers.ts</h3>
+    <section>
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="roomPrefix"></a>
+                    <span class="name">
+                        <span ><b>roomPrefix</b></span>
+                        <a href="#roomPrefix"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>(userId: number): string &#x3D;&gt; &#x60;room_${userId}&#x60;</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/SpeechRecognition/constants.ts</h3>
+    <section>
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="SR_POOL_LIFETIME"></a>
+                    <span class="name">
+                        <span ><b>SR_POOL_LIFETIME</b></span>
+                        <a href="#SR_POOL_LIFETIME"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>2400000</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="SR_POOL_NUMBER"></a>
+                    <span class="name">
+                        <span ><b>SR_POOL_NUMBER</b></span>
+                        <a href="#SR_POOL_NUMBER"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>4</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/SpeechRecognition/sr.service.ts</h3>
+    <section>
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="SRProcessPath"></a>
+                    <span class="name">
+                        <span ><b>SRProcessPath</b></span>
+                        <a href="#SRProcessPath"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>resolve(
+  &#x27;src&#x27;,
+  &#x27;SpeechRecognition&#x27;,
+  &#x27;scripts&#x27;,
+  &#x27;speechToText.process.js&#x27;,
+)</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/workers/constants.ts</h3>
+    <section>
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="STANDARD_POOL_LIFETIME"></a>
+                    <span class="name">
+                        <span ><b>STANDARD_POOL_LIFETIME</b></span>
+                        <a href="#STANDARD_POOL_LIFETIME"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>900000</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="STANDARD_POOL_NUMBER"></a>
+                    <span class="name">
+                        <span ><b>STANDARD_POOL_NUMBER</b></span>
+                        <a href="#STANDARD_POOL_NUMBER"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>1</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/calls/types.ts</h3>
+    <section>
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="StatusToTimestampDict"></a>
+                    <span class="name">
+                        <span ><b>StatusToTimestampDict</b></span>
+                        <a href="#StatusToTimestampDict"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/object" target="_blank" >object</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>{
+  [CallStatus.active]: &#x27;startTimestamp&#x27;,
+  [CallStatus.ended]: &#x27;endTimestamp&#x27;,
+  [CallStatus.rejected]: &#x27;rejectedTimestamp&#x27;,
+  [CallStatus.failed]: &#x27;failedTimestamp&#x27;,
+  [CallStatus.cancelled]: &#x27;cancelledTimestamp&#x27;,
+}</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/webrtc/constants.ts</h3>
+    <section>
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="TIME_EXCEED_LIMIT"></a>
+                    <span class="name">
+                        <span ><b>TIME_EXCEED_LIMIT</b></span>
+                        <a href="#TIME_EXCEED_LIMIT"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>30000</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'miscellaneous-variables';
+            var COMPODOC_CURRENT_PAGE_URL = 'variables.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+       <script src="../js/libs/zepto.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>
