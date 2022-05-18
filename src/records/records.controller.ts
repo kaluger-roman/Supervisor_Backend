@@ -63,7 +63,10 @@ export class RecordsController {
   async getTranscriptionSrc(
     @Body() body: TranscriptionPayload,
   ): Promise<{ caller: TranscriptionUnit[]; callee: TranscriptionUnit[] }> {
-    const record = await this.recordsService.findRecordById(body.id);
+    const record = await this.recordsService.findRecordById(
+      body.id,
+      RecordIncluders.deep,
+    );
 
     if (!record.transcriptionCallee || !record.transcriptionCaller)
       return { caller: null, callee: null };

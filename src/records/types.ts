@@ -1,5 +1,6 @@
 import { CallSide, CallStatus, CallType } from 'src/calls/types';
 import { TranscriptionUnit } from 'src/SpeechRecognition/types';
+import { SortOrder } from 'src/types';
 import { CallIDPayload } from 'src/webrtc/types';
 
 export type RecordType = {
@@ -18,6 +19,16 @@ export type RecordType = {
 
 export type RecordFiltersPayload = Omit<RecordFilters, 'status'>;
 
+export enum SortedFieldsRecordFilters {
+  calleeName = 'calleeName',
+  callerName = 'callerName',
+  id = 'id',
+  start = 'start',
+  duration = 'duration',
+}
+
+export type SortItem = { key: SortedFieldsRecordFilters; order: SortOrder };
+
 export type RecordFilters = {
   calleesList: string[];
   callersList: string[];
@@ -25,6 +36,7 @@ export type RecordFilters = {
   limit?: number;
   page?: number;
   status?: CallStatus[];
+  orderBy?: SortItem[];
 };
 
 export type SrcPayload = {

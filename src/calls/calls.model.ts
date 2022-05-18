@@ -1,4 +1,3 @@
-import { isEqual } from 'lodash';
 import {
   BeforeCreate,
   BeforeUpdate,
@@ -55,15 +54,16 @@ export class Call extends Model {
   @HasOne(() => Record, 'recordId')
   record: Record;
 
+  @Column
+  startTimestamp: number;
+
+  @Column
+  endTimestamp: number;
+
   @BeforeUpdate
   @BeforeCreate
   static addStatus(instance) {
-    if (
-      !isEqual(
-        instance.dataValues.statusSequence,
-        instance._previousDataValues.statusSequence,
-      )
-    ) {
+    if (instance.dataValues.status !== instance._previousDataValues.status) {
       instance.dataValues.statusSequence = [
         ...(instance._previousDataValues.statusSequence || []),
         instance.status,
@@ -72,6 +72,18 @@ export class Call extends Model {
         ...(instance._previousDataValues.statusTimestampsSequence || []),
         Date.now(),
       ];
+
+      if (instance.dataValues.status === CallStatus.active) {
+        instance.dataValues.startTimestamp = Date.now();
+      }
+
+      if (
+        [CallStatus.ended, CallStatus.failed].includes(
+          instance.dataValues.status,
+        )
+      ) {
+        instance.dataValues.endTimestamp = Date.now();
+      }
     }
   }
 }

@@ -22,6 +22,7 @@ import {
   CHUNK_DURATION,
   PROCESS_TOTAL_OFFSET,
   RECORDS_FILE_PATH,
+  SortKeyToFields,
   TARGET_EXT,
 } from './constants';
 import { extension } from 'mime-types';
@@ -38,10 +39,8 @@ import { SRService } from 'src/SpeechRecognition/sr.service';
 import { nanoid } from 'nanoid';
 import { SRMode, TranscriptionUnit } from 'src/SpeechRecognition/types';
 import { Transcription as TranscriptionModel } from './transcription.model';
-import { consoleBlue } from 'helpers/coloredConsole';
 import { Readable } from 'stream';
 import { existsSync } from 'fs';
-import { Where } from 'sequelize/types/utils';
 import { Op } from 'sequelize';
 import { User as UserModel } from 'src/users/users.model';
 
@@ -109,9 +108,12 @@ export class RecordsService {
     private sequelize: Sequelize,
   ) {}
 
-  async findRecordById(id: number): Promise<RecordType | null> {
+  async findRecordById(
+    id: number,
+    mode?: RecordIncluders,
+  ): Promise<RecordType | null> {
     return await this.recordModel.findByPk(id, {
-      include: includers(RecordIncluders.all),
+      include: includers(mode || RecordIncluders.base),
     });
   }
 
@@ -144,6 +146,10 @@ export class RecordsService {
         ? (Number(payload.page) - 1) * Number(payload.limit)
         : undefined,
       include: includers(includeMode),
+      order: payload.orderBy.map((ordEl) => [
+        ...SortKeyToFields[ordEl.key],
+        ordEl.order.toUpperCase(),
+      ]) as any,
     });
 
     return { total, records };

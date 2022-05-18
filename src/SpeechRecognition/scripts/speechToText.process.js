@@ -19,7 +19,6 @@ const BASIC_SAMPLE_RATE = 48000;
 logLevel(-1);
 
 const speechToText = async ({ src, mode }) => {
-  console.log(mode, src);
   const model =
     mode === 'deep' ? loadModel(FULL_MODELS_DIR) : loadModel(MODELS_DIR);
   const tempFile = path.resolve('tmp', `${nanoid()}.${SR_REQUIRED_EXT}`);

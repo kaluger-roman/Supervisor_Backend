@@ -1,4 +1,5 @@
 import { NestFactory, Reflector } from '@nestjs/core';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 
@@ -8,6 +9,15 @@ async function bootstrap() {
 
   app.useGlobalGuards(new JwtAuthGuard(reflector));
   app.enableShutdownHooks();
+
+  const config = new DocumentBuilder()
+    .setTitle('Superviser')
+    .setDescription('The Superviser API description')
+    .setVersion('1.0')
+    .addTag('Superviser')
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, document);
 
   await app.listen(3000);
 
