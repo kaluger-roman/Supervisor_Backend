@@ -15,6 +15,7 @@ export const SortKeyToFields = {
     { model: User, as: 'callee' },
     'username',
   ],
+  [SortedFieldsRecordFilters.status]: [{ model: Call, as: 'call' }, 'status'],
   [SortedFieldsRecordFilters.callerName]: [
     { model: Call, as: 'call' },
     { model: User, as: 'caller' },

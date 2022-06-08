@@ -6,7 +6,7 @@ import * as fs from 'fs';
 import { RecordsService } from './records.service';
 import {
   FilteredRecords,
-  RecordFiltersPayload,
+  RecordFilters,
   RecordIncluders,
   SrcPayload,
   TranscriptionPayload,
@@ -19,11 +19,14 @@ export class RecordsController {
   constructor(private recordsService: RecordsService) {}
 
   @Post(ROUTES.API.RECORDS.FULL)
-  async getRecords(
-    @Body() body: RecordFiltersPayload,
-  ): Promise<FilteredRecords> {
+  async getRecords(@Body() body: RecordFilters): Promise<FilteredRecords> {
     const { records, total } = await this.recordsService.findByFilters(
-      { ...body, status: [CallStatus.ended] },
+      {
+        ...body,
+        status: body.status?.length
+          ? body.status
+          : [CallStatus.active, CallStatus.ended],
+      },
       RecordIncluders.base,
     );
 

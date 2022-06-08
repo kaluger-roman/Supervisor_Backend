@@ -17,14 +17,13 @@ export type RecordType = {
   transcriptionCalleeFluent: TranscriptionUnit[];
 };
 
-export type RecordFiltersPayload = Omit<RecordFilters, 'status'>;
-
 export enum SortedFieldsRecordFilters {
   calleeName = 'calleeName',
   callerName = 'callerName',
   id = 'id',
   start = 'start',
   duration = 'duration',
+  status = 'status',
 }
 
 export type SortItem = { key: SortedFieldsRecordFilters; order: SortOrder };
