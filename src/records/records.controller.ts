@@ -71,12 +71,18 @@ export class RecordsController {
       RecordIncluders.deep,
     );
 
-    if (!record.transcriptionCallee || !record.transcriptionCaller)
-      return { caller: null, callee: null };
+    if (record.call.status === CallStatus.active) {
+      return {
+        caller:
+          record.transcriptionCallerFluent?.map(pickTranscriptFields) || null,
+        callee:
+          record.transcriptionCallerFluent.map(pickTranscriptFields) || null,
+      };
+    }
 
     return {
-      caller: record.transcriptionCaller.map(pickTranscriptFields),
-      callee: record.transcriptionCallee.map(pickTranscriptFields),
+      caller: record.transcriptionCaller?.map(pickTranscriptFields) || null,
+      callee: record.transcriptionCallee?.map(pickTranscriptFields) || null,
     };
   }
 }
