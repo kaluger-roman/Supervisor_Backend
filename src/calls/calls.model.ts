@@ -24,7 +24,7 @@ export class Call extends Model {
   @Column({ defaultValue: [], type: DataType.ARRAY(DataType.STRING) })
   statusSequence: CallStatus[];
 
-  @Column({ defaultValue: [], type: DataType.ARRAY(DataType.STRING) })
+  @Column({ defaultValue: [], type: DataType.ARRAY(DataType.BIGINT) })
   statusTimestampsSequence: number[];
 
   @Column
@@ -54,10 +54,10 @@ export class Call extends Model {
   @HasOne(() => Record, 'recordId')
   record: Record;
 
-  @Column
+  @Column({ type: DataType.BIGINT })
   startTimestamp: number;
 
-  @Column
+  @Column({ type: DataType.BIGINT })
   endTimestamp: number;
 
   @BeforeUpdate

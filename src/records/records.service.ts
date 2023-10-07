@@ -369,6 +369,8 @@ export class RecordsService {
     const result = await this.srService.speechToText(src, mode, taskId);
     const record = await this.findRecordById(recordId);
 
+    console.log(result);
+
     let unitsToWrite: TranscriptionUnit[] = [];
 
     if (mode === SRMode.fluent) {

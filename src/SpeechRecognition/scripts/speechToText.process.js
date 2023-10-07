@@ -12,7 +12,7 @@ const promisedFs = promisify('fs');
 const nanoid = require('nanoid').nanoid;
 
 const MODELS_DIR = path.resolve('sr_models', 'vosk-model-small-ru-0.22');
-const FULL_MODELS_DIR = path.resolve('sr_models', 'vosk-model-ru-0.22');
+const FULL_MODELS_DIR = path.resolve('sr_models', 'vosk-model-ru-0.42');
 const SR_REQUIRED_EXT = 'wav';
 const BASIC_SAMPLE_RATE = 48000;
 

@@ -34,7 +34,7 @@
     "@nestjs/websockets": "^8.4.0",
     "@sequelize/core": "^7.0.0-alpha.10",
     "@solyarisoftware/voskjs": "^1.2.8",
-    "bcrypt": "^5.0.1",
+    "bcrypt": "^5.1.1",
     "fluent-ffmpeg": "^2.1.2",
     "lodash": "^4.17.21",
     "mime-types": "^2.1.35",

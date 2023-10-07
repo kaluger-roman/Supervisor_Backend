@@ -34,8 +34,6 @@ export class WorkersPool<T extends Task, U> {
     const freeWorker = this.pool.find((worker) => worker.isFree);
     const availableTask = this.taskSequence.shift();
 
-    console.log('tryRunTask', availableTask);
-
     if (!(freeWorker && availableTask)) return;
 
     freeWorker.isFree = false;
