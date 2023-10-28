@@ -24,6 +24,15 @@ export class Record extends Model {
   @Column
   srcMerged: string;
 
+  @Column({ defaultValue: 0 })
+  totalCrimeRateSyn: number;
+
+  @Column({ defaultValue: 0 })
+  totalCrimeRateW2V: number;
+
+  @Column({ defaultValue: 0 })
+  totalCrimeRateBert: number;
+
   @Column({ type: DataType.DECIMAL })
   duration: number;
 

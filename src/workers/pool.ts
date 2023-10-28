@@ -24,7 +24,6 @@ export class WorkersPool<T extends Task, U> {
   }
 
   planTask(task: T) {
-    console.log('planTask', task);
     this.taskSequence.push(task);
 
     this.tryRunTask();
@@ -37,7 +36,8 @@ export class WorkersPool<T extends Task, U> {
     if (!(freeWorker && availableTask)) return;
 
     freeWorker.isFree = false;
-    freeWorker.worker.send(availableTask);
+
+    console.log('task started', freeWorker.worker.pid, availableTask);
 
     const handler = (result: U) => {
       freeWorker.isFree = true;
@@ -50,6 +50,8 @@ export class WorkersPool<T extends Task, U> {
     };
 
     freeWorker.worker.addListener('message', handler);
+
+    freeWorker.worker.send(availableTask);
   }
 
   shutdown() {

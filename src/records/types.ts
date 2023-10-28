@@ -36,6 +36,7 @@ export type RecordFilters = {
   page?: number;
   status?: CallStatus[];
   orderBy?: SortItem[];
+  crimeRateFilter: number;
 };
 
 export type SrcPayload = {

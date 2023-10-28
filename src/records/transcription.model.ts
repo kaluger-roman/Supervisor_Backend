@@ -28,6 +28,12 @@ export class Transcription extends Model {
   @Column
   type: string;
 
+  @Column({ defaultValue: 0 })
+  crimeMeaningSynonymRate: number;
+
+  @Column({ defaultValue: 0 })
+  crimeMeaningW2VRate: number;
+
   @ForeignKey(() => Record)
   @Column
   transcriptionCallerId: number;

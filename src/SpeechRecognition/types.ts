@@ -15,6 +15,8 @@ export type TranscriptionUnit = {
   start: number;
   word: string;
   id: number;
+  crimeMeaningSynonymRate: number;
+  crimeMeaningW2VRate: number;
 };
 
 export type SRResult = {

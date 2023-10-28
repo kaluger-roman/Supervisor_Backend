@@ -36,6 +36,9 @@ export class RecordsController {
         pick(record, [
           'id',
           'duration',
+          'totalCrimeRateSyn',
+          'totalCrimeRateW2V',
+          'totalCrimeRateBert',
           'call.id',
           'call.status',
           'call.statusSequence',
@@ -79,6 +82,9 @@ export class RecordsController {
           record.transcriptionCallerFluent.map(pickTranscriptFields) || null,
       };
     }
+
+    console.log(record.transcriptionCaller);
+    console.log(record.transcriptionCallerFluent);
 
     return {
       caller: record.transcriptionCaller?.map(pickTranscriptFields) || null,

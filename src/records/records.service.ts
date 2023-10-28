@@ -34,7 +34,7 @@ import {
   getDuration,
 } from './helpers';
 import { last, takeWhile } from 'lodash';
-import { CallSide, CallStatus, CallType } from 'src/calls/types';
+import { CallSide, CallType } from 'src/calls/types';
 import { SRService } from 'src/SpeechRecognition/sr.service';
 import { nanoid } from 'nanoid';
 import { SRMode, TranscriptionUnit } from 'src/SpeechRecognition/types';
@@ -43,6 +43,7 @@ import { Readable } from 'stream';
 import { existsSync } from 'fs';
 import { Op } from 'sequelize';
 import { User as UserModel } from 'src/users/users.model';
+import { analiticsService } from './analitics/analitics.service';
 
 const promisedFs = promisify('fs');
 
@@ -132,6 +133,23 @@ export class RecordsService {
       duration: {
         [Op.between]: [payload.duration.from, payload.duration.to],
       },
+      [Op.or]: [
+        {
+          totalCrimeRateSyn: {
+            [Op.gte]: payload.crimeRateFilter,
+          },
+        },
+        {
+          totalCrimeRateW2V: {
+            [Op.gte]: payload.crimeRateFilter,
+          },
+        },
+        {
+          totalCrimeRateBert: {
+            [Op.gte]: payload.crimeRateFilter,
+          },
+        },
+      ],
     };
 
     const total = await this.recordModel.count({
@@ -343,7 +361,7 @@ export class RecordsService {
       delete this.recordFluentTrancriptionSeq[record.id];
     }
 
-    this.transcriptRecord(record.id, SRMode.deep, side, targetPath);
+    await this.transcriptRecord(record.id, SRMode.deep, side, targetPath);
   }
 
   async transcriptRecord(
@@ -369,9 +387,9 @@ export class RecordsService {
     const result = await this.srService.speechToText(src, mode, taskId);
     const record = await this.findRecordById(recordId);
 
-    console.log(result);
+    console.log('result', result);
 
-    let unitsToWrite: TranscriptionUnit[] = [];
+    const unitsToWrite: Partial<TranscriptionModel>[] = [];
 
     if (mode === SRMode.fluent) {
       this.recordFluentTrancriptionSeq[recordId][side] =
@@ -390,33 +408,77 @@ export class RecordsService {
           : record.transcriptionCallerFluent;
       const lastTimestamp = transcripts?.length ? last(transcripts).end : 0;
 
-      for (let i = 0; i < tasksToWrite.length; i++) {
-        const curTask = tasksToWrite[i];
-
+      for await (const curTask of tasksToWrite) {
         const duration = await getDuration(curTask.src);
 
-        curTask.result.forEach((unit, inx, arr) => {
-          unitsToWrite.push({
-            ...unit,
-            start: Number(lastTimestamp) + Number(unit.start),
-            end:
-              Number(lastTimestamp) +
-              Number(inx === arr.length - 1 ? duration : unit.end),
-          });
-        });
+        await Promise.all(
+          curTask.result.map(async (unit, inx, arr) => {
+            unitsToWrite.push({
+              ...unit,
+              start: Number(lastTimestamp) + Number(unit.start),
+              end:
+                Number(lastTimestamp) +
+                Number(inx === arr.length - 1 ? duration : unit.end),
+            });
+          }),
+        );
       }
     } else {
-      unitsToWrite = result.result;
+      await Promise.all(
+        result.result.map(async (unit) => {
+          unitsToWrite.push(unit);
+        }),
+      );
     }
 
+    console.log('unitsToWrite', unitsToWrite);
+
     await this.sequelize.transaction(async (t) => {
+      const crimeMeaningSynonymRate =
+        await analiticsService.evaluateSynonymRatingSuspicion(
+          unitsToWrite as any,
+        );
+
+      const crimeMeaningW2VRate =
+        await analiticsService.evaluateW2VRatingSuspicion(
+          crimeMeaningSynonymRate as any,
+        );
+
+      console.log(2232);
+
       await this.transcriptionModel.bulkCreate(
         unitsToWrite.map((unit) => ({
           ...unit,
           [buildTranscriptionForeignId(side, mode)]: record.id,
+          crimeMeaningSynonymRate,
+          crimeMeaningW2VRate,
         })),
         { transaction: t },
       );
     });
+
+    const totalCrimeRateSyn =
+      unitsToWrite.reduce(
+        (acc, x) => acc + (x.crimeMeaningSynonymRate || 0),
+        0,
+      ) / unitsToWrite.length;
+
+    const totalCrimeRateW2V =
+      unitsToWrite.reduce((acc, x) => acc + (x.crimeMeaningW2VRate || 0), 0) /
+      unitsToWrite.length;
+
+    const totalCrimeRateBert =
+      await analiticsService.evaluateBERTRatingSuspicion(unitsToWrite as any);
+
+    console.log(totalCrimeRateBert, totalCrimeRateSyn, totalCrimeRateW2V);
+
+    await this.recordModel.update(
+      {
+        totalCrimeRateSyn,
+        totalCrimeRateW2V,
+        totalCrimeRateBert,
+      },
+      { where: { id: record.id } },
+    );
   }
 }

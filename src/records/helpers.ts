@@ -37,4 +37,12 @@ export const getDuration = async (src: string): Promise<number> =>
   });
 
 export const pickTranscriptFields = (val: TranscriptionUnit) =>
-  pick(val, ['conf', 'end', 'id', 'start', 'word']);
+  pick(val, [
+    'conf',
+    'end',
+    'id',
+    'start',
+    'word',
+    'crimeMeaningSynonymRate',
+    'crimeMeaningW2VRate',
+  ]);
