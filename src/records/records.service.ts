@@ -44,6 +44,8 @@ import { existsSync } from 'fs';
 import { Op } from 'sequelize';
 import { User as UserModel } from 'src/users/users.model';
 import { analiticsService } from './analitics/analitics.service';
+import * as topics from './analitics/bert/topics.json';
+import * as topics1 from './analitics/bert/topics_rus.json';
 
 const promisedFs = promisify('fs');
 
@@ -263,6 +265,8 @@ export class RecordsService {
       tmpPath,
     );
 
+    await new Promise((resolve) => setTimeout(resolve, 300));
+
     this.transcriptRecord(record.id, SRMode.fluent, side, tmpPath);
   }
 
@@ -325,28 +329,30 @@ export class RecordsService {
         },
         { transaction: t, where: { id: record.id } },
       );
+    });
 
-      if (
-        existsSync(callerPath) &&
-        existsSync(calleePath) &&
-        !existsSync(mergedPath)
-      ) {
-        await new Promise((resolve) =>
-          ffmpeg()
-            .input(callerPath)
-            .input(calleePath)
-            .complexFilter([
-              {
-                filter: 'amix',
-                options: { inputs: 2, duration: 'longest' },
-              },
-            ])
-            .on('end', resolve)
-            .saveToFile(mergedPath),
-        );
+    if (
+      existsSync(callerPath) &&
+      existsSync(calleePath) &&
+      !existsSync(mergedPath)
+    ) {
+      await new Promise((resolve) =>
+        ffmpeg()
+          .input(callerPath)
+          .input(calleePath)
+          .complexFilter([
+            {
+              filter: 'amix',
+              options: { inputs: 2, duration: 'longest' },
+            },
+          ])
+          .on('end', resolve)
+          .saveToFile(mergedPath),
+      );
 
-        const duration = await getDuration(mergedPath);
+      const duration = await getDuration(mergedPath);
 
+      await this.sequelize.transaction(async (t) => {
         await this.recordModel.update(
           {
             srcMerged: mergedPath,
@@ -354,12 +360,12 @@ export class RecordsService {
           },
           { transaction: t, where: { id: record.id } },
         );
-      }
-    });
-
-    if (this.recordFluentTrancriptionSeq[record.id]) {
-      delete this.recordFluentTrancriptionSeq[record.id];
+      });
     }
+
+    // if (this.recordFluentTrancriptionSeq[record.id]) {
+    //   delete this.recordFluentTrancriptionSeq[record.id];
+    // }
 
     await this.transcriptRecord(record.id, SRMode.deep, side, targetPath);
   }
@@ -389,7 +395,7 @@ export class RecordsService {
 
     console.log('result', result);
 
-    const unitsToWrite: Partial<TranscriptionModel>[] = [];
+    let unitsToWrite: Partial<TranscriptionModel>[] = [];
 
     if (mode === SRMode.fluent) {
       this.recordFluentTrancriptionSeq[recordId][side] =
@@ -431,52 +437,69 @@ export class RecordsService {
       );
     }
 
-    console.log('unitsToWrite', unitsToWrite);
+    console.log('unitsToWrite', mode, side, unitsToWrite);
+
+    const crimeMeaningSynonymRate =
+      await analiticsService.evaluateSynonymRatingSuspicion(
+        unitsToWrite as any,
+      );
+
+    const crimeMeaningW2VRate =
+      await analiticsService.evaluateW2VRatingSuspicion(
+        crimeMeaningSynonymRate as any,
+      );
+
+    console.log(
+      'rateDetected',
+      mode,
+      side,
+      crimeMeaningSynonymRate,
+      crimeMeaningW2VRate,
+    );
+
+    unitsToWrite = unitsToWrite.map((unit, inx) => ({
+      ...unit,
+      [buildTranscriptionForeignId(side, mode)]: record.id,
+      crimeMeaningSynonymRate: crimeMeaningSynonymRate[inx].suspicion,
+      crimeMeaningW2VRate: crimeMeaningW2VRate[inx].suspicion,
+    }));
 
     await this.sequelize.transaction(async (t) => {
-      const crimeMeaningSynonymRate =
-        await analiticsService.evaluateSynonymRatingSuspicion(
-          unitsToWrite as any,
-        );
-
-      const crimeMeaningW2VRate =
-        await analiticsService.evaluateW2VRatingSuspicion(
-          crimeMeaningSynonymRate as any,
-        );
-
-      console.log(2232);
-
-      await this.transcriptionModel.bulkCreate(
-        unitsToWrite.map((unit) => ({
-          ...unit,
-          [buildTranscriptionForeignId(side, mode)]: record.id,
-          crimeMeaningSynonymRate,
-          crimeMeaningW2VRate,
-        })),
-        { transaction: t },
-      );
+      await this.transcriptionModel.bulkCreate(unitsToWrite, {
+        transaction: t,
+      });
     });
 
     const totalCrimeRateSyn =
       unitsToWrite.reduce(
         (acc, x) => acc + (x.crimeMeaningSynonymRate || 0),
         0,
-      ) / unitsToWrite.length;
+      ) / (unitsToWrite.length || 1);
 
     const totalCrimeRateW2V =
       unitsToWrite.reduce((acc, x) => acc + (x.crimeMeaningW2VRate || 0), 0) /
-      unitsToWrite.length;
+      (unitsToWrite.length || 1);
 
-    const totalCrimeRateBert =
+    console.log('before bert');
+
+    const { score: totalCrimeRateBert, label: bertLabel } =
       await analiticsService.evaluateBERTRatingSuspicion(unitsToWrite as any);
 
-    console.log(totalCrimeRateBert, totalCrimeRateSyn, totalCrimeRateW2V);
+    console.log(
+      'after bert',
+      totalCrimeRateBert,
+      bertLabel,
+      totalCrimeRateSyn,
+      totalCrimeRateW2V,
+    );
 
     await this.recordModel.update(
       {
         totalCrimeRateSyn,
         totalCrimeRateW2V,
-        totalCrimeRateBert,
+        totalCrimeRateBert:
+          bertLabel === 'LABEL_0' ? 0 : totalCrimeRateBert * 100,
+        bertLabel: topics1[topics[bertLabel.replace('LABEL_', '')]],
       },
       { where: { id: record.id } },
     );

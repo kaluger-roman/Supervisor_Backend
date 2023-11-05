@@ -11,6 +11,10 @@ export const BASE_SUSPISIOUS_WORDS: Array<SuspisiousUnit> = [
     weight: 20,
   },
   {
+    word: 'преступление',
+    weight: 20,
+  },
+  {
     word: 'мыть',
     weight: 10,
   },

@@ -17,15 +17,17 @@ const SR_REQUIRED_EXT = 'wav';
 const BASIC_SAMPLE_RATE = 48000;
 
 logLevel(-1);
+const fluentModel = loadModel(MODELS_DIR);
+const fullModel = loadModel(FULL_MODELS_DIR);
 
 const speechToText = async ({ src, mode }) => {
-  const model =
-    mode === 'deep' ? loadModel(FULL_MODELS_DIR) : loadModel(MODELS_DIR);
+  const model = mode === 'deep' ? fullModel : fluentModel;
   const tempFile = path.resolve('tmp', `${nanoid()}.${SR_REQUIRED_EXT}`);
 
   try {
     if (!existsSync(src)) {
-      process.exit(1);
+      console.log('source not exist', src);
+      return;
     }
 
     await promisedFs.writeFile(tempFile, '');
@@ -44,14 +46,16 @@ const speechToText = async ({ src, mode }) => {
       ),
     );
 
-    process.send(
-      await transcriptFromFile(tempFile, model, {
-        sampleRate,
-      }),
-    );
-  } finally {
-    freeModel(model);
-    promisedFs.rm(tempFile);
+    console.log('beforeprocess');
+    const result = await transcriptFromFile(tempFile, model, {
+      sampleRate,
+    });
+    await promisedFs.rm(tempFile);
+
+    process.send(result);
+    console.log('afterprocess');
+  } catch (e) {
+    console.log(e);
   }
 };
 

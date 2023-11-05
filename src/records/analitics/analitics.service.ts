@@ -1,6 +1,6 @@
 import { TranscriptionUnit } from '../../SpeechRecognition/types';
 import { spawn } from 'child_process';
-import dict from './dictionary.json';
+import * as dict from './dictionary.json';
 import { DictionarySynonyms } from './types';
 import { BASE_SUSPISIOUS_WORDS } from './constants';
 
@@ -43,7 +43,6 @@ class AnaliticsService {
           word: convertedData[inx],
         }));
 
-        console.log('fixSpell');
         resolve(result);
       });
     });
@@ -67,16 +66,13 @@ class AnaliticsService {
     return 0;
   }
   async evaluateSynonymRatingSuspicion(transcriptions: TranscriptionUnit[]) {
-    console.log('evaluateSynonymRatingSuspicion');
     const spelled = (await this.fixSpell(
       transcriptions,
     )) as TranscriptionUnit[];
-    console.log('evaluateSynonymRatingSuspicionspelled', spelled);
 
     const lemmas = (await this.lemmatizeTranscriptions(
       spelled,
     )) as TranscriptionUnit[];
-    console.log('evaluateSynonymRatingSuspicionspelledlemmas', lemmas);
 
     return lemmas.map((x) => ({
       ...x,
@@ -118,17 +114,25 @@ class AnaliticsService {
     });
   }
 
-  async evaluateBERTRatingSuspicion(transcriptions: TranscriptionUnit[]) {
+  async evaluateBERTRatingSuspicion(
+    transcriptions: TranscriptionUnit[],
+  ): Promise<any> {
     const pythonProcess = spawn('python3', [
       'src/records/analitics/bert/calc.py',
       JSON.stringify(transcriptions.map((x) => x.word).join(' ')),
     ]);
     //надо закидывать фразы наверное целые, подумать
     return await new Promise((resolve) => {
-      pythonProcess.stdout.on('data', (data) => {
-        const result = JSON.parse(data.toString());
+      pythonProcess.stderr.on('data', (data) => {
+        const result = data.toString();
 
-        resolve(result.label === 'LABEL_0' ? 0 : result.score * 100);
+        console.log(result);
+      });
+
+      pythonProcess.stdout.on('data', (data) => {
+        const result = JSON.parse(data.toString())[0];
+
+        resolve(result);
       });
     });
   }

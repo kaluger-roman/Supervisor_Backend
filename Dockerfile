@@ -22,6 +22,7 @@ RUN python3 -m spacy download ru_core_news_lg
 RUN pip3 install gensim
 RUN pip3 install transformers
 RUN pip3 install pyspellchecker
+RUN pip3 install torch==2.0.*
 
 COPY . /app
 RUN npm ci
